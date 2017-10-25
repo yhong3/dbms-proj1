@@ -26,3 +26,5 @@ javac OracleJDBCExample.java
 java -cp .\ojdbc8.jar;.\ OracleJDBCExample
 ```
 
+## Reference
+[Connect to Oracle DB via JDBC driver](http://www.mkyong.com/jdbc/connect-to-oracle-db-via-jdbc-driver-java/)
