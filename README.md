@@ -23,6 +23,6 @@ pass: password
 Run JDBC
 ```java
 javac OracleJDBCExample.java
-java -cp C:\Users\trsho\Dropbox\github\eclipse\dbms-proj1\ojdbc8.jar;C:\Users\trsho\Dropbox\github\eclipse\dbms-proj1\ OracleJDBCExample
+java -cp .\ojdbc8.jar;.\ OracleJDBCExample
 ```
 
