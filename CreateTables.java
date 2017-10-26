@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
-public class CreateTables {
+public class CreateTables extends ConnectionManager{
 
 	private static final String DB_DRIVER = "oracle.jdbc.driver.OracleDriver";
 	private static final String DB_CONNECTION = "jdbc:oracle:thin:@localhost:1521:orcl";
@@ -28,6 +28,7 @@ public class CreateTables {
 
 	private static void createTable() throws SQLException {
 
+		ConnectionManager dbcon = new ConnectionManager();
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
 
@@ -137,7 +138,8 @@ public class CreateTables {
 		Statement statement = null;
 		
 		try {
-			dbConnection = getDBConnection();
+			
+			dbConnection = dbcon.getDBConnection();
 			statement = dbConnection.createStatement();
 			
 			for( String stmt : createTableSQL ) {
@@ -163,34 +165,6 @@ public class CreateTables {
 
 	}
 
-	private static Connection getDBConnection() {
 
-		Connection dbConnection = null;
-
-		try {
-
-			Class.forName(DB_DRIVER);
-
-		} catch (ClassNotFoundException e) {
-
-			System.out.println(e.getMessage());
-
-		}
-
-		try {
-
-			dbConnection = DriverManager.getConnection(
-                            DB_CONNECTION, DB_USER,DB_PASSWORD);
-			return dbConnection;
-
-		} catch (SQLException e) {
-
-			System.out.println(e.getMessage());
-
-		}
-
-		return dbConnection;
-
-	}
 
 }

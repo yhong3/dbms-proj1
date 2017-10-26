@@ -20,11 +20,15 @@ name: admin
 pass: password
 ```
 
-Run JDBC
+### Run JDBC
+#### Using CMD
 ```java
 javac OracleJDBCExample.java
 java -cp .\ojdbc8.jar;.\ OracleJDBCExample
 ```
-
+#### Using Eclipse
+Right click on ojdbc8.jar > "Build Path" > "Add to build path"
+than just run from eclipse
 ## Reference
 [Connect to Oracle DB via JDBC driver](http://www.mkyong.com/jdbc/connect-to-oracle-db-via-jdbc-driver-java/)
+[Drop All Tables](http://www.jochenhebbrecht.be/site/2010-05-10/database/drop-all-tables-in-oracle-db-scheme)
