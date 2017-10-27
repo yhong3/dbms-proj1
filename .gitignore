@@ -2,3 +2,10 @@
 /JDBCPreparedStatementCreateExample.class
 /ConnectionManager.class
 /CreateTables.class
+/MainMenu.class
+/LoginMenu.class
+/StartMenu.class
+/InstructorMenu.class
+/User.class
+/RoleType.class
+/ProfileMenu.class

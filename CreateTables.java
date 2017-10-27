@@ -13,21 +13,14 @@ public class CreateTables extends ConnectionManager{
 	private static final String DB_PASSWORD = "password";
 
 	public static void main(String[] argv) {
-
 		try {
-
 			createTable();
-
 		} catch (SQLException e) {
-
 			System.out.println(e.getMessage());
-
 		}
-
 	}
 
 	private static void createTable() throws SQLException {
-
 		ConnectionManager dbcon = new ConnectionManager();
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
@@ -36,7 +29,7 @@ public class CreateTables extends ConnectionManager{
 		
 		String createCourse = "CREATE TABLE COURSE(" + 
 				"course_id INT," + 
-				"course_name VARCHAR(20) NOT NULL," + 
+				"course_name VARCHAR(50) NOT NULL," + 
 				"course_start DATE NOT NULL," + 
 				"course_end DATE NOT NULL," + 
 				"PRIMARY KEY (course_id) " + 
@@ -44,7 +37,7 @@ public class CreateTables extends ConnectionManager{
 		String createProfessor = "CREATE TABLE PROFESSOR(" + 
 				"professor_id INT," + 
 				"user_id VARCHAR(50) NOT NULL," + 
-				"professor_name VARCHAR(20) NOT NULL," + 
+				"professor_name VARCHAR(50) NOT NULL," + 
 				"staff_id INT NOT NULL," + 
 				"PRIMARY KEY (professor_id)" + 
 				")";
@@ -52,7 +45,7 @@ public class CreateTables extends ConnectionManager{
 		String createStudent = "CREATE TABLE STUDENT(" + 
 				"student_id INT," + 
 				"user_id VARCHAR(50) NOT NULL," + 
-				"student_name VARCHAR(20) NOT NULL," + 
+				"student_name VARCHAR(50) NOT NULL," + 
 				"year_enrolled INT NOT NULL," + 
 				"type VARCHAR(20) NOT NULL," + 
 				"staff_id INT NOT NULL," + 
@@ -60,7 +53,7 @@ public class CreateTables extends ConnectionManager{
 				")";
 		String createExercise = "CREATE TABLE EXERCISE(" + 
 				"exercise_id INT," + 
-				"exercise_name VARCHAR(20) NOT NULL," + 
+				"exercise_name VARCHAR(50) NOT NULL," + 
 				"exercise_start DATE NOT NULL," + 
 				"exercise_end DATE NOT NULL," + 
 				"retries_allowed INT NOT NULL," + 
