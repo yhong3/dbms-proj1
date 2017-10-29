@@ -19,26 +19,33 @@ public class ProfileMenu {
         	
         	// set profile for current user
         	setProfile(conn, currentUser);
-        	
-        	// seperate first name and last name
-        	String[] nameSplited = fullName.split("\\s+");
-        	
-        	// print out profile
-            System.out.println("You are currently logged in as: " + currentUser.getUser_id());
-            System.out.println("Enter 0 to Go back to previous menu. ");
-            System.out.println("1. First Name: " + nameSplited[0]);
-            System.out.println("2. Last Name: " + nameSplited[1]);
-            System.out.println("3. Employee ID: " + user_id);
+        	switch (currentUser.getRole()) {
+        		case RoleType.PROFESSOR:
+        		case RoleType.TA:
+                	// seperate first name and last name
+                	String[] nameSplited = fullName.split("\\s+");
+                	
+                	// print out profile
+                    System.out.println("You are currently logged in as: " + currentUser.getUser_id());
+                    System.out.println("0: Go back to previous menu. ");
+                    System.out.println("1. First Name: " + nameSplited[0]);
+                    System.out.println("2. Last Name: " + nameSplited[1]);
+                    System.out.println("3. Employee ID: " + user_id);
 
-            choice = s.nextInt();
+                    choice = s.nextInt();
 
-            // handle user input
-            if (choice == GOBACK) {
-            	return;
-            } else {
-            	System.out.println("Invalid choice. Please try again.");
-            }
-             
+                    // handle user input
+                    if (choice == GOBACK) {
+                    	return;
+                    } else {
+                    	System.out.println("Invalid choice. Please try again.");
+                    }
+                    break;
+        		case RoleType.STUDENT:
+        			// student menu
+        			break;
+
+        	}             
         } // end while
     } // end displayMenu()
     private static void setProfile(Connection conn, User currentUser) {
@@ -86,14 +93,14 @@ public class ProfileMenu {
 			System.out.println(e.getMessage());
         } finally {
             if (stmt != null) {
-               try {
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	            try {
+					stmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         }
-    } // end Login()
+    } // end setProfile()
 
 }

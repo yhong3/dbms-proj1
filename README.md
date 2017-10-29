@@ -31,7 +31,7 @@ Right click on ojdbc8.jar > "Build Path" > "Add to build path"
 than just run from eclipse
 ## Reference
 [Connect to Oracle DB via JDBC driver](http://www.mkyong.com/jdbc/connect-to-oracle-db-via-jdbc-driver-java/)
-
 [Drop All Tables](http://www.jochenhebbrecht.be/site/2010-05-10/database/drop-all-tables-in-oracle-db-scheme)
-
 [csv2sql](http://csv2mysql.patrotsky.com/index.php)
+[Auto-increment ID in oracle](http://earlruby.org/2009/01/creating-auto-increment-columns-in-oracle/)
+

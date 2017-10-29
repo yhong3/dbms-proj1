@@ -33,6 +33,8 @@ public class InstructorMenu {
                 case EDITSTUDENT:
                     break;
                 case EDITQUESTIONBANK:
+                	// TODO use this for exercise temporarily 
+                	ExerciseMenu.displayViewMenu(conn, currentUser);
                 	break;
                 case LOGOUT:
                 	//TODO bring back to login menu

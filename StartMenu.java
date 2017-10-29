@@ -48,6 +48,9 @@ public class StartMenu {
                 case EXIT:
                     System.exit(0);
                     break;
+                default:
+                	System.out.print("Invalid option");
+                	continue;
             }
         }
     }
