@@ -3,7 +3,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 import sql.*;
 
 public class QuestionMenu {
@@ -89,6 +88,7 @@ public class QuestionMenu {
 				System.out.println("Topic : " + topic);
 				System.out.println("Hint : " + hint);
 				System.out.println("Difficulty Level: " + difficulty_level);
+				System.out.println();
 			}
 			return 1;
 		} 
@@ -108,24 +108,19 @@ public class QuestionMenu {
 
 	private static int addQuestion(Connection conn, Scanner s) {
 		int check_add_question = 0;
+		question_id = findmaxid(conn, "question_id", "QUESTION") + 1;
 		System.out.print("The topic id of the question is: ");
 		topic = s.nextInt();
-		System.out.println("The text of the question is: \n");
+		s.nextLine();
+		System.out.print("The text of the question is: \n");
 		question_text = s.nextLine();
-		try {
-			TimeUnit.SECONDS.sleep(1);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		System.out.println("The hint of the question is: ");
 		hint = s.nextLine();
-		System.out.println();
 		System.out.println("The detailed explanation of the question is: ");
 		detailed_explanation = s.nextLine();
-		System.out.println();
 		System.out.println("The difficulty level of the question is: ");
 		difficulty_level = s.nextInt();
+		s.nextLine();
 
 		PreparedStatement preparedStatement;
 		int check_question_info = 0;
@@ -167,7 +162,7 @@ public class QuestionMenu {
 			System.out.println("1. Parameterized");
 			System.out.println("2. Concrete");
 			choice = s.nextInt();
-
+			s.nextLine();
 			switch (choice) {
 			case 1:
 				//TODO view the question
@@ -175,6 +170,7 @@ public class QuestionMenu {
 				System.out.println("How many parameters are you looking to have in your questions?");
 				System.out.println("(The maximum number is 5)");
 				n_o_p = s.nextInt();
+				s.nextLine();
 				if(n_o_p <= 5 & n_o_p > 0) {
 					AddAnswers aa = new AddAnswers(conn, n_o_p);
 					check = aa.parameterizeQ(conn, s, n_o_p);
@@ -214,11 +210,11 @@ public class QuestionMenu {
 	public static int questionflow(int check_insert, int loop_check, Scanner s) {
 		String sp_decision; 
 		if(check_insert == 0) {
-			System.out.println("The question was unsucessfully added, would you want to readd or add another question?");
+			System.out.println("The question was unsucessfully added, would you want to readd or add another answer?");
 			sp_decision = s.nextLine();
 		}
 		else {
-			System.out.println("The question was sucessfully added, would you want to readd or add another question?");
+			System.out.println("The question was sucessfully added, would you want to readd or add another answer?");
 			sp_decision = s.nextLine();
 		}
 
@@ -228,5 +224,25 @@ public class QuestionMenu {
 			loop_check = 0;
 		}
 		return loop_check;
+	}
+	
+	public static int findmaxid(Connection conn, String another_query, String tablename) {
+		ResultSet rs;
+		int count = 0;
+		PreparedStatement ps;
+		String query = SqlQueries.SQL_FINDID + tablename;
+		query = query.replace("?1", another_query);
+		System.out.println(query);
+		try {
+			ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				count = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return count;
 	}
 }
