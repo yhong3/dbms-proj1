@@ -77,7 +77,7 @@ public class SqlQueries {
     public static final String SQL_UPDATESTUENROLL = "UPDATE STUDENT SET YEAR_ENROLLED = ? WHERE USER_ID = ?";
     
     
-    public static final String SQL_COUNTROWS = "SELECT COUNT (*) FROM ?";
+    public static final String SQL_FINDID = "SELECT MAX(?1) FROM ";
     
     
     public static final String SQL_INSERTTOPIC = "INSERT INTO TOPIC(TOPIC_ID, TOPIC_NAME) VALUES (?,?)";
