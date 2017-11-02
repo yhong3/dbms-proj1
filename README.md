@@ -20,15 +20,22 @@ name: admin
 pass: password
 ```
 
-### Run JDBC
-#### Using CMD
+### Run the program
+#### Populate sample database
+1. in sql/DatabaseParameter.java, change it to your database credentials, add it to gitignore once you are done.
+2. (optional) Run sql_files/DropAllTable.sql using sql developer if you want to drop all tables 
+3. Run sql_files/createSamples.sql to create and insert tables
+4. run Java
+
+##### Using CMD
 ```java
-javac OracleJDBCExample.java
-java -cp .\ojdbc8.jar;.\ OracleJDBCExample
+javac LoginInterface.java
+java -cp .\ojdbc8.jar;.\ LoginInterface.java
 ```
-#### Using Eclipse
+##### Using Eclipse
 Right click on ojdbc8.jar > "Build Path" > "Add to build path"
-than just run from eclipse
+than just run ```LoginInterface.java``` from eclipse
+
 ## Reference
 [Connect to Oracle DB via JDBC driver](http://www.mkyong.com/jdbc/connect-to-oracle-db-via-jdbc-driver-java/)
 [Drop All Tables](http://www.jochenhebbrecht.be/site/2010-05-10/database/drop-all-tables-in-oracle-db-scheme)
