@@ -176,7 +176,8 @@ Insert into TOPIC (TOPIC_ID,TOPIC_NAME,COURSE_ID) values (7,'AVL Trees','CSC540'
 Insert into TOPIC (TOPIC_ID,TOPIC_NAME,COURSE_ID) values (8,'Sequential File Organization','CSC540');		
 Insert into TOPIC (TOPIC_ID,TOPIC_NAME,COURSE_ID) values (9,'BinarySearch','CSC540');		
 Insert into TOPIC (TOPIC_ID,TOPIC_NAME,COURSE_ID) values (10,'Interpolation Search','CSC540');		
- 		
+Insert into TOPIC (TOPIC_ID,TOPIC_NAME,COURSE_ID) values (11,'FSS','CSC540');
+
 Insert into SCORING_POLICY (SCORING_POLICY_ID,SCORING_POLICY_TYPE) values (1,'Latest attempt');		
 Insert into SCORING_POLICY (SCORING_POLICY_ID,SCORING_POLICY_TYPE) values (2,'Maximum score');		
 Insert into SCORING_POLICY (SCORING_POLICY_ID,SCORING_POLICY_TYPE) values (3,'Average score');		
