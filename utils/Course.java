@@ -52,8 +52,8 @@ public class Course {
         		break;
 	    	
 	    	// TODO: 3. View/Add Exercise
-	        case "3":
-	        	// TODO 
+	        case "3": 
+			ExerciseMenu.ViewExerciseMenu(connection,cid);
 	        	break;
 	        	
 	        // 4. View/Add TA
