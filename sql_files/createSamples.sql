@@ -129,19 +129,21 @@ password VARCHAR(64)
 
 
 CREATE TABLE SUBMITS(
-user_id VARCHAR(50) NOT NULL,
-exercise_id INT NOT NULL,
-question_id INT NOT NULL,
-parameter_id INT,
-concrete_answer_id INT,
-parameter_answer_id INT,
-attempt INT NOT NULL,
-submit_time DATE NOT NULL,
-FOREIGN KEY (user_id) REFERENCES STUDENT ON DELETE CASCADE,
-FOREIGN KEY (exercise_id) REFERENCES EXERCISE ON DELETE CASCADE,
-FOREIGN KEY (question_id) REFERENCES QUESTION ON DELETE CASCADE,
-FOREIGN KEY (parameter_id, parameter_answer_id) REFERENCES PARAMETER_ANSWER ON DELETE CASCADE,
-FOREIGN KEY (concrete_answer_id) REFERENCES CONCRETE_ANSWER ON DELETE CASCADE
+  user_id VARCHAR(50) NOT NULL,
+  course_id VARCHAR(50) NOT NULL,
+  exercise_id INT NOT NULL,
+  question_id INT NOT NULL,
+  parameter_id INT,
+  concrete_answer_id INT,
+  parameter_answer_id INT,
+  attempt INT NOT NULL,
+  submit_time DATE NOT NULL,
+  FOREIGN KEY (course_id) REFERENCES COURSE ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES STUDENT ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id) REFERENCES EXERCISE ON DELETE CASCADE,
+  FOREIGN KEY (question_id) REFERENCES QUESTION ON DELETE CASCADE,
+  FOREIGN KEY (parameter_id, parameter_answer_id) REFERENCES PARAMETER_ANSWER ON DELETE CASCADE,
+  FOREIGN KEY (concrete_answer_id) REFERENCES CONCRETE_ANSWER ON DELETE CASCADE
 );
 
 ------------------
