@@ -17,8 +17,8 @@ public class LoginInterface {
 	
 	private static PreparedStatement preparedStatement;
 	
-    public static int loginRole(Connection connection, String uid, String password) {
-    try {
+    	public static int loginRole(Connection connection, String uid, String password) {
+   	try {
         	preparedStatement = connection.prepareStatement(SqlQueries.SQL_LOGINROLE);
         	preparedStatement.setString(1, uid);
         	preparedStatement.setString(2, password);
