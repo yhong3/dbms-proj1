@@ -67,17 +67,18 @@ PRIMARY KEY (question_id)
 );
 
 CREATE TABLE CONCRETE_ANSWER(
-answer_id INT,
+concrete_answer_id INT,
 question_id INT,
 type INT NOT NULL,
 answer_text VARCHAR(50) NOT NULL,
 short_explanation VARCHAR(50) NOT NULL,
 FOREIGN KEY (question_id) REFERENCES QUESTION ON DELETE CASCADE,
-PRIMARY KEY (answer_id));
+PRIMARY KEY (answer_id)
+);
 
 CREATE TABLE PARAMETER_ANSWER(
 parameter_id INT,
-answer_id INT,
+parameter_answer_id INT,
 question_id INT,
 param_1 VARCHAR(10),
 param_2 VARCHAR(10),
