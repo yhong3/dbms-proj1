@@ -127,10 +127,6 @@ password VARCHAR(64)
 );
 
 
-----------------
--- pending, not tested yet
-----------------
-
 CREATE TABLE SUBMITS(
 user_id VARCHAR(50) NOT NULL,
 exercise_id INT NOT NULL,
