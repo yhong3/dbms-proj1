@@ -89,7 +89,7 @@ answer_text VARCHAR(50) NOT NULL,
 short_explanation VARCHAR(50) NOT NULL,
 type INT NOT NULL,
 FOREIGN KEY (question_id) REFERENCES QUESTION ON DELETE CASCADE,
-PRIMARY KEY (parameter_id, answer_id)
+PRIMARY KEY (parameter_id, parameter_answer_id)
 );
 
 
