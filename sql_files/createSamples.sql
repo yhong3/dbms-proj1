@@ -73,7 +73,7 @@ type INT NOT NULL,
 answer_text VARCHAR(50) NOT NULL,
 short_explanation VARCHAR(50) NOT NULL,
 FOREIGN KEY (question_id) REFERENCES QUESTION ON DELETE CASCADE,
-PRIMARY KEY (answer_id)
+PRIMARY KEY (concrete_answer_id)
 );
 
 CREATE TABLE PARAMETER_ANSWER(
@@ -89,7 +89,7 @@ answer_text VARCHAR(50) NOT NULL,
 short_explanation VARCHAR(50) NOT NULL,
 type INT NOT NULL,
 FOREIGN KEY (question_id) REFERENCES QUESTION ON DELETE CASCADE,
-PRIMARY KEY (parameter_id, answer_id)
+PRIMARY KEY (parameter_answer_id, answer_id)
 );
 
 
