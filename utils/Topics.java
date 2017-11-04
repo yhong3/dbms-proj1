@@ -89,7 +89,7 @@ public class Topics {
 	
 	} // end setProfile()
 
-	private static int addTopic(Connection conn, Scanner s) {
+	public static int addTopic(Connection conn, Scanner s) {
 		int check_add_topic = 0;
 		topic_id = findmaxid(conn, "topic_id", "TOPIC");
 		System.out.println("\nThe name of the topic is: ");
