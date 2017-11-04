@@ -377,12 +377,10 @@ public class Course {
     	Scanner scanner = new Scanner(System.in);
     	
     	// Display all available exercise_id for that user
-    	System.out.println("Test1");
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_ALLPASTEXEERCISE);
     	preparedStatement.setString(1, uid);
     	preparedStatement.setString(2, cid);
     	ResultSet rs_exercise = preparedStatement.executeQuery();
-    	System.out.println("Test2");
     	List<String> exerciseList = new ArrayList<String>();
     	
     	while (rs_exercise.next()) {
@@ -422,7 +420,8 @@ public class Course {
     		//Student View Report i --> viii (1-8)
     		
     		//TODO: Insert Huy's function HERE
-    		
+    		PastHomework ph = new PastHomework();
+    		ph.pastHW(connection, uid, cid, eid);
     		//Student View Report ix (9)
     		Menu.studentViewReportDetailMemu();
     		
@@ -653,8 +652,24 @@ public class Course {
     	// Total points for that attempt
     	// 6. Total points for that attempt
 		// TODO: Confirm: total score should not be less than 0?? 
+    	
+    	// Check the CORRECT_ANSWER_POINTS and INCORRECT_ANSWER_PENALTY given eid
+    	
+    	PreparedStatement preparedStatement_apoint = connection.prepareStatement(SqlQueries.SQL_CHECKPOINTS);
+    	preparedStatement_apoint.setString(1, eid);
+    	
+    	ResultSet rs_apoint= preparedStatement_apoint.executeQuery();
+    	
+    	int temp_coPoint = 0; 
+    	int temp_incoPoint = 0; 
+    	
+    	while (rs_apoint.next()) {
+    		temp_coPoint = rs_apoint.getInt("CORRECT_ANSWER_POINTS");
+    		temp_incoPoint = rs_apoint.getInt("INCORRECT_ANSWER_PENALTY");
+    	}
+    	
 		System.out.println();
-		int total_score = 3*count_corrans + (-1)*count_incorrans;
+		int total_score = temp_coPoint*count_corrans + ((-1)*temp_incoPoint)*count_incorrans;
 		// If the total score > 0, display the total score
 		if (total_score > 0) {
 			System.out.println();
@@ -691,19 +706,17 @@ public class Course {
 	}
     
     // Detailed report for each attempt display
-    static boolean DetailedReportDisplay(String answer_type, String short_explanation, String answer_hint, Date exercise_due, String question_type) {
-    	
+    static boolean DetailedReportDisplay(String answer_type, String short_explanation, String answer_hint, Date exercise_due,
+    		String question_type, String corr_points, String incorr_points) {
+
     	Boolean corransIdx = true;
     	
 		// 3. Solution for each question
 		// Display the hints/solutions for each question
-		// TODO: Confirm: If submit_time is after exercise_due?? Or compare current time with exercise_due?? 
-		ZoneId z = ZoneId.of( "America/New_York" ); // use the new_york time zone to determine current date 
+		// TODO: Confirm: If submit_time is after exercise_due?? Or compare current time with exercise_due??
+		ZoneId z = ZoneId.of( "America/New_York" ); // use the new_york time zone to determine current date
 		LocalDate currentZoneDate = LocalDate.now(z);
 		java.util.Date currentDate = java.sql.Date.valueOf(currentZoneDate);
-		
-		System.out.println(currentDate);
-		System.out.println(exercise_due);
 		
 		// If current data after the exercise due, show the explanation
 		if (currentDate.compareTo(exercise_due) > 0) {
@@ -721,13 +734,14 @@ public class Course {
 		// 4. Whether the selected answer was correct or not (type_0: Incorrect; type_1: Correct)
 		// 5. Points scored for each question
 		// TODO: Confirm: is each question 3 points? 
+		
 		if (answer_type.equals("0")) { 
 			System.out.println();
 			System.out.println("**4. Whether the selected answer was correct or not**");
 			System.out.println("Answer for this question is: " + "Incorrect");
 			System.out.println();
 			System.out.println("**5. Points scored for this question**");
-			System.out.println("Points scored for this question is: " + "-1");
+			System.out.println("Points scored for this question is: " + incorr_points);
 			corransIdx = false;
 		}
 		
@@ -737,21 +751,22 @@ public class Course {
 			System.out.println("Answer for this question is: " + "Correct");
 			System.out.println();
 			System.out.println("**Points scored for this question**");
-			System.out.println("Points scored for this question is: " + "3");
+			System.out.println("Points scored for this question is: " + corr_points);
 		}
 		return corransIdx;
     }
     
-	// Display of concrete questions & answers
-	static boolean ConcreteQuestionAnswer(Connection connection, String uid, String qid, String aid, Date submit_time) throws ParseException, SQLException {
-
-		boolean anscorrIdx = true;
-
-		String query = "SELECT CA.CONCRETE_ANSWER_ID, CA.ANSWER_TEXT, CA.SHORT_EXPLANATION, CA.TYPE, Q.QUESTION_TEXT, Q.HINT, E.EXERCISE_END " + 
-				"FROM CONCRETE_ANSWER CA, QUESTION Q, SUBMITS S, EXERCISE E " + 
-				"WHERE S.USER_ID = ? AND CA.QUESTION_ID= ? AND CA.CONCRETE_ANSWER_ID = ? AND CA.QUESTION_ID = Q.QUESTION_ID " +
-				"AND CA.CONCRETE_ANSWER_ID = S.CONCRETE_ANSWER_ID AND S.EXERCISE_ID = E.EXERCISE_ID ";
-
+    // Display of concrete questions & answers
+ 	static boolean ConcreteQuestionAnswer(Connection connection, String uid, String qid, String aid, Date submit_time) throws ParseException, SQLException {
+ 		
+ 		boolean anscorrIdx = true;
+ 		
+ 		String query = "SELECT CA.CONCRETE_ANSWER_ID, CA.ANSWER_TEXT, CA.SHORT_EXPLANATION, CA.TYPE, Q.QUESTION_TEXT, Q.HINT, " +
+ 				"E.EXERCISE_END, E.CORRECT_ANSWER_POINTS, E.INCORRECT_ANSWER_PENALTY " + 
+ 				"FROM CONCRETE_ANSWER CA, QUESTION Q, SUBMITS S, EXERCISE E " + 
+ 				"WHERE S.USER_ID = ? AND CA.QUESTION_ID= ? AND CA.CONCRETE_ANSWER_ID = ? AND CA.QUESTION_ID = Q.QUESTION_ID " +
+ 				"AND CA.CONCRETE_ANSWER_ID = S.CONCRETE_ANSWER_ID AND S.EXERCISE_ID = E.EXERCISE_ID ";	
+ 		
 		PreparedStatement stmt = connection.prepareStatement(query);
 		ResultSet rs;
 		stmt.setString(1, uid);
@@ -759,7 +774,7 @@ public class Course {
 		stmt.setString(3, aid);
 		rs = stmt.executeQuery();
 		int count_rs = 0;
-
+		
 		while (rs.next()) {
 			count_rs += 1;
 			String answer_type = rs.getString("type");
@@ -768,38 +783,41 @@ public class Course {
 			String short_explanation = rs.getString("short_explanation");
 			String answer_hint = rs.getString("hint");
 			Date exercise_due = rs.getDate("exercise_end");
+			String corr_points = rs.getString("correct_answer_points");
+			String incorr_points = rs.getString("incorrect_answer_penalty");
+			
 			System.out.println(exercise_due);
-
+			
 			// 1. All the questions in that attempt
-
+			
 			System.out.println("**1. Question in this attempt**");
 			System.out.println("Concrete Answers from Question ID: " + qid);
-		System.out.println("Question text : " + question_text);
-
-		// 2. Answers selected by the student for each attempt
-		System.out.println();
-		System.out.println("**2. Answers selected by the student for this Question**");
-		System.out.println("Answer text : " + answer_text);
-
-		// 3-5
-		String question_type = "concrete";
-			anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type);
+    		System.out.println("Question text : " + question_text);
+			
+    		// 2. Answers selected by the student for each attempt
+    		System.out.println();
+    		System.out.println("**2. Answers selected by the student for this Question**");
+    		System.out.println("Answer text : " + answer_text);
+    		
+    		// 3-5
+    		String question_type = "concrete";
+			anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type, corr_points, incorr_points);
 		}
-
-		return anscorrIdx;
-	}
-
-
-	// Display of parameter questions & answers
+		
+ 		return anscorrIdx;
+ 	}
+    
+	
+ 	// Display of parameter questions & answers
 	static boolean parameterQuestionAnswer(Connection connection, String uid, String paraQuesText, String qid, String aid, Date submit_time) {
 		Pattern p = Pattern.compile("<\\s*\\?\\s*>");
-
+		
 		int para_num = countSString(paraQuesText);
 		String[] parameters = new String[para_num];
 		String query = "";
 		boolean anscorrIdx = true;
-
-
+		
+		
 		for(int i = 0; i < para_num; i++) {
 			if(query == "") {
 				query = "SELECT PARAM_" + Integer.toString(i+1);
@@ -808,11 +826,12 @@ public class Course {
 				query += ", PARAM_" + Integer.toString(i+1);
 			}
 		}
-		query += ", PA.PARAMETER_ID, PA.PARAMETER_ANSWER_ID, PA.ANSWER_TEXT, PA.SHORT_EXPLANATION, PA.TYPE, Q.QUESTION_TEXT, Q.HINT, E.EXERCISE_END " + 
+		query += ", PA.PARAMETER_ID, PA.PARAMETER_ANSWER_ID, PA.ANSWER_TEXT, PA.SHORT_EXPLANATION, PA.TYPE, Q.QUESTION_TEXT, Q.HINT, "
+				+ "E.EXERCISE_END, E.CORRECT_ANSWER_POINTS, E.INCORRECT_ANSWER_PENALTY " + 
 				"FROM PARAMETER_ANSWER PA, QUESTION Q, SUBMITS S, EXERCISE E " + 
 				"WHERE S.USER_ID = ? AND PA.QUESTION_ID=? AND PA.PARAMETER_ANSWER_ID = ? AND PA.QUESTION_ID = Q.QUESTION_ID " +
-				"AND PA.PARAMETER_ANSWER_ID = S.PARAMETER_ANSWER_ID AND S.EXERCISE_ID = E.EXERCISE_ID ";
-
+				"AND PA.PARAMETER_ANSWER_ID = S.PARAMETER_ANSWER_ID AND S.EXERCISE_ID = E.EXERCISE_ID ";		
+		
 		try {
 			PreparedStatement stmt = connection.prepareStatement(query);
 			ResultSet rs;
@@ -822,54 +841,56 @@ public class Course {
 			rs = stmt.executeQuery();
 			String s = "";
 			int count_rs = 0;
-
+ 			
 			while (rs.next()) {
 				Matcher m = p.matcher(paraQuesText);
 				count_rs += 1;
 				int count = 0;
-
+				
 				String answer_type = rs.getString("type");
 				String question_text = rs.getString("question_text");
 				String answer_text = rs.getString("answer_text");
 				String short_explanation = rs.getString("short_explanation");
 				String answer_hint = rs.getString("hint");
-				Date exercise_due = rs.getDate("exercise_end");
-
-				// 1. All the questions in that attempt
-				for(int i = 0; i < para_num; i++) {
-					parameters[i] = rs.getString("PARAM_" + Integer.toString(i+1));
-				}
-
-				while (m.find()) {
-				s = m.replaceFirst(parameters[count]);
-				m = p.matcher(s);
-				count += 1;
-			}
-
-				System.out.println("**1. Question in this attempt**");
-				System.out.println("Parameter Answers from Question ID: " + qid);
-				System.out.println("Question Root text: " + s);
-				System.out.print("The set of parameters include: "); 
-				System.out.println();
-				for(int j = 0; j < para_num; j++) {
-					System.out.print(parameters[j] + "  ");
-				}
-
-			// 2. Answers selected by the student for each attempt
-			System.out.println();
-			System.out.println("**2. Answers selected by the student for this Question**");
-			System.out.println("Answer text : " + answer_text); 				
-
-			// 3-5
-				String question_type = "parameter";
-				anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type);
+ 				Date exercise_due = rs.getDate("exercise_end");
+ 				String corr_points = rs.getString("correct_answer_points");
+ 				String incorr_points = rs.getString("incorrect_answer_penalty");
+ 				
+ 				// 1. All the questions in that attempt
+ 				for(int i = 0; i < para_num; i++) {
+ 					parameters[i] = rs.getString("PARAM_" + Integer.toString(i+1));
+ 				}
+ 				
+ 				while (m.find()) {
+ 		        	s = m.replaceFirst(parameters[count]);
+ 		        	m = p.matcher(s);
+ 		        	count += 1;
+ 		        }
+ 				
+ 				System.out.println("**1. Question in this attempt**");
+ 				System.out.println("Parameter Answers from Question ID: " + qid);
+ 				System.out.println("Question Root text: " + s);
+ 				System.out.print("The set of parameters include: "); 
+ 				System.out.println();
+ 				for(int j = 0; j < para_num; j++) {
+ 					System.out.print(parameters[j] + "  ");
+ 				}
+ 				
+ 	    		// 2. Answers selected by the student for each attempt
+ 	    		System.out.println();
+ 	    		System.out.println("**2. Answers selected by the student for this Question**");
+ 	    		System.out.println("Answer text : " + answer_text); 				
+ 				
+ 	    		// 3-5
+ 				String question_type = "parameter";
+ 				anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type, corr_points, incorr_points);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return anscorrIdx;
 	}
-
+	
     static Boolean taViewCourse(Connection connection, String uid, String cid) throws Throwable {
     	
     	Scanner scanner = new Scanner(System.in);
