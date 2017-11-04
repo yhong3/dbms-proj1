@@ -105,7 +105,7 @@ public class ExerciseMenu {
 			stmt.setInt(12, exe_max_diff);
 			stmt.setInt(13, exe_mode);
 			stmt.executeQuery();
-			System.out.println("Succesfully entered an exercise. Go to set qestions for the exercise id="+last_id);
+			System.out.println("Succesfully entered an exercise. Go to set questions for the exercise id="+last_id);
 			return;
 		}
 		catch (Exception e) {
@@ -151,34 +151,49 @@ public class ExerciseMenu {
 					return;
 				} else {
 					if(choice==1)
-						{ 
+						{ 	
+							String query_mode="Select exercise_mode FROM EXERCISE where EXERCISE_ID=?";
 							String limit_query="Select NUM_OF_QUESTIONS FROM EXERCISE where EXERCISE_ID=?";
 							String quest_count="select count(QUESTION_ID) AS C FROM EXERCISE_QUESTION where EXERCISE_ID=?";
 							try {
-								stmt=conn.prepareStatement(limit_query);
+								stmt=conn.prepareStatement(query_mode);
 								stmt.setInt(1, exerciseId);
 								rs=stmt.executeQuery();
 								if(rs.next())
 								{
-									int max_no=rs.getInt("NUM_OF_QUESTIONS");
-									stmt=conn.prepareStatement(quest_count);
-									stmt.setInt(1, exerciseId);
-									qs=stmt.executeQuery();
-									if(qs.next())
+									int exe_mode=rs.getInt("exercise_mode");
+									if(exe_mode==0)
 									{
-										int current_no=qs.getInt(1);
-										if(current_no<max_no)
+										stmt=conn.prepareStatement(limit_query);
+										stmt.setInt(1, exerciseId);
+										rs=stmt.executeQuery();
+										if(rs.next())
 										{
-											exercise_add_question(conn,exerciseId,cid);
+											int max_no=rs.getInt("NUM_OF_QUESTIONS");
+											stmt=conn.prepareStatement(quest_count);
+											stmt.setInt(1, exerciseId);
+											qs=stmt.executeQuery();
+											if(qs.next())
+											{
+												int current_no=qs.getInt(1);
+												if(current_no<max_no)
+												{
+													standard_exercise_add_question(conn,exerciseId,cid);
+												}
+												else
+												{
+													System.out.println("Max count reached first remove question ");
+													return;
+												}
+											}	
 										}
-										else
-										{
-											System.out.println("Max count reached first remove question ");
-											return;
-										}
-									}	
+									}
+									else
+									{
+										adaptive_exercise_add_question(conn, exerciseId, cid);
+									}
 								}	
-							} catch (SQLException e1) {
+								} catch (SQLException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
@@ -239,7 +254,7 @@ public class ExerciseMenu {
 		}			
 		System.out.println();	
 	}
-	public static void exercise_add_question(Connection conn, int exerciseId, String cid)
+	public static void standard_exercise_add_question(Connection conn, int exerciseId, String cid)
 	{
 		int choice=0;
 		Scanner sc=new Scanner(System.in);
@@ -334,6 +349,53 @@ public class ExerciseMenu {
 		
 		}	
 }
+	public static void adaptive_exercise_add_question(Connection conn, int exerciseId, String cid)
+	{
+		int choice=0;
+		Scanner sc=new Scanner(System.in);
+		String find_topic="select TOPIC_ID,TOPIC_NAME from TOPIC,COURSE where TOPIC.COURSE_ID=COURSE.COURSE_ID and COURSE.COURSE_ID=?";		
+		String add_topic="Insert into Exercise_topic values(?,?)";
+		try {
+			
+				System.out.println("select a topicid \n ");
+				ResultSet rs;
+				ResultSet qs;
+				stmt = conn.prepareStatement(find_topic);
+				stmt.setString(1, cid);
+				rs=stmt.executeQuery();
+				while(rs.next())
+				{
+					int topic_ids=rs.getInt("TOPIC_ID");
+					String topic_names=rs.getString("TOPIC_NAME");
+					System.out.println(topic_ids+" : "+topic_names);
+				}
+				System.out.println("select a topicids and press 0 to stop adding topics\n ");
+				choice=sc.nextInt();
+				while(choice!=0)
+				{		
+
+					stmt=conn.prepareStatement(add_topic);
+					stmt.setInt(1, exerciseId);
+					stmt.setInt(2, choice);
+					stmt.executeQuery();
+					choice=sc.nextInt();				
+				}	
+				System.out.println("questions recorded !! going back");
+				return;
+			}
+		catch (Exception e) {
+		System.out.println(e.getMessage());
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}	
+		}	
+	}	
 	private static int queryExercise(Connection conn,int exerciseId) {
 		
 		try {
