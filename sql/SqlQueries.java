@@ -3,6 +3,7 @@ package sql;
 
 public class SqlQueries {
     
+	/// Profile Part
 	// Check login role
 	public static final String SQL_LOGINROLE = "SELECT U.ROLE FROM USERID_PASSWORD U WHERE U.USER_ID = ? AND U.PASSWORD= ? ";
     
@@ -35,8 +36,8 @@ public class SqlQueries {
     		+ "WHERE S.USER_ID = ? ";
     
     // Insert a Course
-    public static final String SQL_INSERTCOURSE = "INSERT INTO COURSE(COURSE_ID, COURSE_NAME, COURSE_START, COURSE_END) "
-    		+ "VALUES (?,?,?,?)";
+    public static final String SQL_INSERTCOURSE = "INSERT INTO COURSE(COURSE_ID, COURSE_NAME, COURSE_START, COURSE_END, COURSE_LEVEL) "
+    		+ "VALUES (?,?,?,?,?)";
     
     // Enroll a Student
     public static final String SQL_ENROLLSTUDENT = "INSERT INTO STUDENT(USER_ID, STUDENT_NAME, YEAR_ENROLLED, TYPE) "
@@ -161,5 +162,26 @@ public class SqlQueries {
     		" SELECT PA.TYPE" + 
     		" FROM PARAMETER_ANSWER PA" + 
     		" WHERE PA.QUESTION_ID = ? AND PA.PARAMETER_ID = ? AND PA.PARAMETER_ANSWER_ID = ? ";
-
-} // end class
+    
+    //// Report Part
+    // Select all past exercise id for a user 
+    public static final String SQL_ALLPASTEXEERCISE = "SELECT DISTINCT S.EXERCISE_ID FROM SUBMITS S WHERE S.USER_ID = ? AND S.COURSE_ID = ? ";
+    
+    // Select all distinct attempts for a certain exercise
+    public static final String SQL_ALLATTEMPTS = "SELECT DISTINCT S.ATTEMPT FROM SUBMITS S WHERE S.USER_ID = ? AND S.COURSE_ID = ? AND S.EXERCISE_ID = ? ";
+    
+    // Select question_ids for a certain attempt
+    public static final String SQL_QUESTIONSOFATTEMPT = "SELECT S.QUESTION_ID, S.PARAMETER_ID, "
+    		+ "S.CONCRETE_ANSWER_ID, S.PARAMETER_ANSWER_ID, S.SUBMIT_TIME, Q.TYPE "
+    		+ "FROM SUBMITS S, QUESTION Q "
+    		+ "WHERE S.USER_ID = ? AND S.COURSE_ID = ? AND S.EXERCISE_ID = ? AND S.ATTEMPT = ? AND S.QUESTION_ID = Q.QUESTION_ID ";
+    
+    // Select paraAnswerText from PARAMETER_ANSWER table
+    public static final String SQL_PARAANSWERTEXT = "SELECT ANSWER_TEXT FROM PARAMETER_ANSWER "
+    		+ "WHERE QUESTION_ID = ? AND PARAMETER_ID = ? AND PARAMETER_ANSWER_ID = ? ";
+    
+    // Select paraAnswerText from PARAMETER_ANSWER table
+    public static final String SQL_PARAQUESTIONTEXT = "SELECT QUESTION_TEXT FROM QUESTION "
+    		+ "WHERE QUESTION_ID = ? ";
+    
+}
