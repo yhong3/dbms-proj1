@@ -183,7 +183,6 @@ public class SqlQueries {
     // Select paraAnswerText from PARAMETER_ANSWER table
     public static final String SQL_PARAQUESTIONTEXT = "SELECT QUESTION_TEXT FROM QUESTION "
     		+ "WHERE QUESTION_ID = ? ";
-    
 	    
     // Check CORRECT_ANSWER_POINTS and INCORRECT_ANSWER_PENALTY
     public static final String SQL_CHECKPOINTS = "SELECT E.CORRECT_ANSWER_POINTS, E.INCORRECT_ANSWER_PENALTY FROM EXERCISE E "
