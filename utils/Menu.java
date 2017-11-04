@@ -1,6 +1,9 @@
 package utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Menu {
 	
@@ -407,6 +410,66 @@ public class Menu {
 		System.out.println("Student: " + sid + " have been dropped from the course.");
     }
 	
+	/*****************************
+	 * Student HW related
+	 *****************************/
+	public static void studentCurrentHWHeader() { 
+		System.out.println( "\n******Current HWs*******");
+	}
 	
+	public static void printCurrentHW(int exid, String ename, int attempt_left) {
+		// format 
+		//1. exercise name (Attempt left: 2)
+		if (attempt_left == -1) {
+			System.out.println(exid + ". " + ename + " (Attempt left: Unlimited)");
+		} else {
+			System.out.println(exid + ". " + ename + " (Attempt left: " + attempt_left + ")");
+		}
+		
+	}
+	public static void studentCurrentHWFooter() { 
+		System.out.println( "Please choose the homework id you want to attempt: ");
+		
+	}
+	public static void printStudentNoHWMessage() { System.out.println( "\n**Hurray! No open homeworks now.**"); }
+	
+	public static void printQuestion(int num, String text, ArrayList<String> ans) {
+		System.out.println( 
+				"\n******Question " + num + " *******\n"
+				+ text
+				+ "\n********************************"
+				+ "\nOptions (1-4): "
+				+ "\n 1. " + ans.get(0)
+				+ "\n 2. " + ans.get(1)
+				+ "\n 3. " + ans.get(2)
+				+ "\n 4. " + ans.get(3)
+				+ "\n");
+	}
+	
+	public static void askAnswerMessage() {
+		System.out.println(
+			"\nPlease enter your answer (1-4): ");
+    }
+	
+	public static void invalidAnswerMessage() {
+		System.out.println(
+			"\nInvalid option, please enter your answer (1-4): ");
+    }
+	
+	public static void completeHWMessage() {
+		System.out.println(
+			"\n*** You have complete the attempt of this homework***");
+    }
+	public static void submitAnswerSuccessMessage() { System.out.println( "**Answer Submitted**"); }
+	public static void attemptHWSuccessMessage() { System.out.println( "**You have finished this attempt successfully.**"); }
 
+	// TODO remove
+	/*
+    public static void main(String args[]) {
+        String text = "<?>b<?>c<?>d<?>e<?>";
+        String[] splittedText = text.split(Pattern.quote("<?>"));
+
+        System.out.println(Arrays.toString(splittedText));
+    }
+    */
 }

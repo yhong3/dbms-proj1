@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -307,7 +308,7 @@ public class Course {
 	    	// TODO: 4. View Current/Past HWs
 	        case "3":
 	        	// TODO 
-	        	returnToRoot = studentViewCourseHM(connection, cid);
+	        	returnToRoot = studentViewCourseHM(connection, cid, uid);
 	        	
 	        	break;
 	        	
@@ -329,15 +330,128 @@ public class Course {
     
     // TODO: Students view details a course, including:
     // current HWs, past HWs
-    static Boolean studentViewCourseHM(Connection connection, String cid) throws SQLException, ParseException
+    static Boolean studentViewCourseHM(Connection connection, String cid, String uid) throws SQLException, ParseException
     {	
+    	Scanner scanner = new Scanner(System.in);
     	Boolean returnToRoot = true;
     	//preparedStatement = connection.prepareStatement(SqlQueries.SQL_STUVIEWALLCOURSE);
     	//preparedStatement.setString(1, cid);
     	//ResultSet rs_course = preparedStatement.executeQuery();
     	
+    	// print menu
     	Menu.studentViewHWMenu();
-    	Menu.returnToMenuCommand();
+		Menu.returnToMenuMessage();
+
+    	String selection = "1";    	
+
+    	while (selection != "3" && returnToRoot) {
+	    	
+	    	selection = scanner.nextLine();
+	    	
+	    	switch (selection) {
+	    	// view current Open homework
+	    	case "1": 
+	    		returnToRoot = studentViewCurrentHW(connection, cid, uid);
+	    		returnToRoot = false;
+	    		break;
+	    	// TODO view past homework
+	        case "2":
+	        	break;
+	        	
+	        case "3":
+            	Menu.returnLoginMessage();
+            	returnToRoot = false;
+            	return returnToRoot;
+	        case "0":
+	        	return returnToRoot;
+            default:
+            	Menu.warningMessage();
+            	break;
+            
+	    	}//end switch
+    	}//end while
+    	return returnToRoot;
+	}
+    static Boolean studentViewCurrentHW(Connection connection, String cid, String uid) throws SQLException, ParseException
+    {	
+    	Boolean returnToRoot = true;
+    	Scanner scanner = new Scanner(System.in);
+    	int exid = 0;
+    	String ename = "";
+    	int retries_allowed = 0;
+    	int excount = 0;
+    	int stuAttemptCount = 0;
+    	int stuMaxAttempt = 0; 
+        ArrayList<Integer> HWOptions= new ArrayList<Integer>();
+
+    	
+    	// query for available hw for this course
+        int hwcount = 0;
+        System.out.println("debug Run SQL_CURRENTOPENHW");
+    	preparedStatement = connection.prepareStatement(SqlQueries.SQL_CURRENTOPENHW);
+    	preparedStatement.setString(1, cid);
+    	ResultSet rs_openexercise = preparedStatement.executeQuery();
+    	// print menu header
+    	Menu.studentCurrentHWHeader();
+    	
+    	// open exercise > 1
+    	while (rs_openexercise.next()) {
+    		excount++;
+        		exid = rs_openexercise.getInt("EXERCISE_ID");
+        		ename = rs_openexercise.getString("EXERCISE_NAME");
+        		retries_allowed = rs_openexercise.getInt("RETRIES_ALLOWED");
+        		
+        		if (retries_allowed == -1) { // retries unlimited, just print
+	    			Menu.printCurrentHW(exid, ename, retries_allowed);
+	    			HWOptions.add(exid);
+        		} else {
+        			// check the current student max attempt     		
+        	        System.out.println("debug Run SQL_STUDENTMAXATTEMPT");
+
+        			preparedStatement = connection.prepareStatement(SqlQueries.SQL_STUDENTMAXATTEMPTEXERCISE);
+        	    	preparedStatement.setInt(1, exid);
+        	    	ResultSet rs_studentmaxattempt = preparedStatement.executeQuery();
+        	    	if (rs_studentmaxattempt.next()) {
+        	    		stuAttemptCount = rs_studentmaxattempt.getInt("ROWCNT");
+        	    		if (stuAttemptCount == 0 ) { // student have never attempt the exercise
+        	        		// if no attempt, just print the exercise with retries_allowed
+        	    			Menu.printCurrentHW(exid, ename, retries_allowed);
+        	    			HWOptions.add(exid);
+        	    		} else { // student has attempted the exercise
+        	    			// check the max attempt number that is completed
+        	    			stuMaxAttempt = rs_studentmaxattempt.getInt("MAXATTEMPT");
+        	    			if (stuMaxAttempt < retries_allowed) { // student still have attempt remaining
+            	    			Menu.printCurrentHW(exid, ename, retries_allowed - stuMaxAttempt);
+            	    			HWOptions.add(exid);
+        	    			}
+        	    		}
+        	    	}
+        		}
+    	} // end while open hws
+    	Menu.returnToMenuMessage();
+    	
+    	if (excount == 0) { // no open homeworks
+			Menu.printStudentNoHWMessage();    		
+    	} else {
+    	// print menu footer
+    	Menu.studentCurrentHWFooter();
+    	}
+    	
+    	System.out.println(Arrays.toString(HWOptions.toArray()));     	// TODO debug...
+
+    	int selection = 1;
+    	while (selection != 0) {
+	    	selection = scanner.nextInt();
+	    	if (HWOptions.contains(selection)) {
+	    		// selection is exid
+	    		Homework.attemptHomework(connection, selection, uid, cid);
+	    		selection = 0; // exit after attempt successfully
+	    	} else if (selection == 0) {
+	    		return returnToRoot;
+	    	} else {
+            	Menu.warningMessage();
+	    	}
+    	}//end while
     	return returnToRoot;
 	}
     
@@ -435,5 +549,6 @@ public class Course {
 		
     	Menu.enrollTASuccessMessage(sid, cid);
 	}
+
 
 }
