@@ -127,13 +127,15 @@ public class ExerciseMenu {
 		int exerciseId = 0;
 		int choice = 0;
 		int lastQuerySuccess = 0;
+		ResultSet rs;
+		ResultSet qs;
 		Scanner s = new Scanner(System.in);
 
 				System.out.print("Please Enter Exercise ID: ");
 
 				exerciseId = s.nextInt();
 				lastQuerySuccess = queryExercise(conn, exerciseId);
-				
+				int quest_limit=0;
 				if (lastQuerySuccess == 1) { // set by latest query
 					System.out.println("0: Go back to previous menu. ");
 					System.out.println("1. Add  Questions to Exercise");
@@ -149,8 +151,37 @@ public class ExerciseMenu {
 					return;
 				} else {
 					if(choice==1)
-						{
-							exercise_add_question(conn,exerciseId,cid);
+						{ 
+							String limit_query="Select NUM_OF_QUESTIONS FROM EXERCISE where EXERCISE_ID=?";
+							String quest_count="select count(QUESTION_ID) AS C FROM EXERCISE_QUESTION where EXERCISE_ID=?";
+							try {
+								stmt=conn.prepareStatement(limit_query);
+								stmt.setInt(1, exerciseId);
+								rs=stmt.executeQuery();
+								if(rs.next())
+								{
+									int max_no=rs.getInt("NUM_OF_QUESTIONS");
+									stmt=conn.prepareStatement(quest_count);
+									stmt.setInt(1, exerciseId);
+									qs=stmt.executeQuery();
+									if(qs.next())
+									{
+										int current_no=qs.getInt(1);
+										if(current_no<max_no)
+										{
+											exercise_add_question(conn,exerciseId,cid);
+										}
+										else
+										{
+											System.out.println("Max count reached first remove question ");
+											return;
+										}
+									}	
+								}	
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 						}
 					else
 					{
@@ -210,13 +241,14 @@ public class ExerciseMenu {
 	}
 	public static void exercise_add_question(Connection conn, int exerciseId, String cid)
 	{
-		
+		int choice=0;
 		Scanner sc=new Scanner(System.in);
 		String find_topic="select TOPIC_ID,TOPIC_NAME from TOPIC,COURSE where TOPIC.COURSE_ID=COURSE.COURSE_ID and COURSE.COURSE_ID=?";		
 		try {
 			
 			System.out.println("select a topicid \n ");
 		ResultSet rs;
+		ResultSet qs;
 		stmt = conn.prepareStatement(find_topic);
 		stmt.setString(1, cid);
 		rs=stmt.executeQuery();
@@ -245,15 +277,44 @@ public class ExerciseMenu {
 			System.out.println(topic_ids+" : "+topic_names);
 		}
 		System.out.println("select a questionids and press 0 to stop adding questions to add\n ");
-		int choice=sc.nextInt();
+		choice=sc.nextInt();
 		while(choice!=0)
 		{		
-				String add_query="Insert into EXERCISE_QUESTION values(?,?)";
-				stmt = conn.prepareStatement(add_query);
+				String limit_query="Select NUM_OF_QUESTIONS FROM EXERCISE where EXERCISE_ID=?";
+				String quest_count="select count(QUESTION_ID) AS C FROM EXERCISE_QUESTION where EXERCISE_ID=?";
+				try {
+				stmt=conn.prepareStatement(limit_query);
 				stmt.setInt(1, exerciseId);
-				stmt.setInt(2, choice);	
-				stmt.executeQuery();
-				choice=sc.nextInt();
+				rs=stmt.executeQuery();
+				if(rs.next())
+				{
+					int max_no=rs.getInt("NUM_OF_QUESTIONS");
+					stmt=conn.prepareStatement(quest_count);
+					stmt.setInt(1, exerciseId);
+					qs=stmt.executeQuery();
+					if(qs.next())
+					{
+						int current_no=qs.getInt(1);
+						if(current_no<max_no)
+						{
+							String add_query="Insert into EXERCISE_QUESTION values(?,?)";
+							stmt = conn.prepareStatement(add_query);
+							stmt.setInt(1, exerciseId);
+							stmt.setInt(2, choice);	
+							stmt.executeQuery();
+							choice=sc.nextInt();
+						}
+						else
+						{
+							System.out.println("Max count reached first remove question ");
+							return;
+						}
+					}	
+				}	
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}	
 
 			System.out.println("questions recorded !! going back");
