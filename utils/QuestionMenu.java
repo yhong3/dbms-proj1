@@ -68,7 +68,7 @@ public class QuestionMenu {
 	} // end displayMenu()
 
 	public static int queryQuestion(Connection conn, int questionId, Scanner s) {
-		System.out.println("called");
+		//System.out.println("called");
 		PreparedStatement  stmt = null;
 		String parameters = null;
 		try {
@@ -85,42 +85,51 @@ public class QuestionMenu {
 			// loop through result
 			rs = stmt.executeQuery();
 			//System.out.println("rsfound");
-			while (rs.next()) {
-				//System.out.println("result found");
-				question_id = rs.getInt("question_id");
-				type = rs.getInt("type");
-				question_text = rs.getString("question_text");
-				topic = rs.getInt("topic_id");
-				hint = rs.getString("hint");
-				difficulty_level = rs.getInt("difficulty_level");
-				detailed_explanation = rs.getString("detailed_explanation");
-				System.out.println("Question ID : " + question_id);
-				System.out.println("Question text : " + question_text);
-				System.out.println("Question type : " + type);
-				System.out.println("Detailed Explanation: " + detailed_explanation);
-				System.out.println("Topic : " + topic);
-				System.out.println("Hint : " + hint);
-				System.out.println("Difficulty Level: " + difficulty_level);
-				System.out.println();
+			if (!rs.isBeforeFirst() ) {    
+			    System.out.println("This Question ID doesn't exist"); 
+			    System.out.println();
+			    return 0;
 			}
-			int check_answer_set = -1;
-			if(type == 1) {
-				System.out.println("Do you want to see all the parameters with the answers set for this parameterized question?");
-				String decision = s.nextLine();
-				if(decision.toLowerCase().charAt(0) == 'y') {
-					check_answer_set = ParameterAnswer(question_text, conn);
+			else {
+				while (rs.next()) {
+					//System.out.println("result found");
+					question_id = rs.getInt("question_id");
+					type = rs.getInt("type");
+					question_text = rs.getString("question_text");
+					topic = rs.getInt("topic_id");
+					hint = rs.getString("hint");
+					difficulty_level = rs.getInt("difficulty_level");
+					detailed_explanation = rs.getString("detailed_explanation");
+					System.out.println("Question ID : " + question_id);
+					System.out.println("Question text : " + question_text);
+					System.out.println("Question type : " + type);
+					System.out.println("Detailed Explanation: " + detailed_explanation);
+					System.out.println("Topic : " + topic);
+					System.out.println("Hint : " + hint);
+					System.out.println("Difficulty Level: " + difficulty_level);
+					System.out.println();
 				}
-			} else {
-				System.out.println("Do you want to see all answers set for this concrete question?");
-				String decision = s.nextLine();
-				if(decision.toLowerCase().charAt(0) == 'y') {
-					check_answer_set = ConcreteAnswer(conn);
+				int check_answer_set = -1;
+				if(type == 1) {
+					System.out.println("Do you want to see all the parameters with the answers set for this parameterized question?");
+					String decision = s.nextLine();
+					System.out.println();
+					if(decision.toLowerCase().charAt(0) == 'y') {
+						check_answer_set = ParameterAnswer(question_text, conn);
+					}
+				} else {
+					System.out.println("Do you want to see all answers set for this concrete question?");
+					String decision = s.nextLine();
+					System.out.println();
+					if(decision.toLowerCase().charAt(0) == 'y') {
+						check_answer_set = ConcreteAnswer(conn);
+					}
 				}
+				if(check_answer_set == 0) {
+					System.out.println("Errors in getting answers set!");
+				}
+				return 1;
 			}
-			if(check_answer_set == 0) {
-				System.out.println("Errors in getting answers set!");
-			}
-			return 1;
 		} 
 		catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -146,6 +155,7 @@ public class QuestionMenu {
 			System.out.println("2. Concrete");
 			type = s.nextInt();
 			s.nextLine();
+			System.out.println();
 			ArrayList<String> topics = getTopics(conn);
 			if(!topics.isEmpty()) {
 				System.out.println("These are the available topics.");
@@ -155,22 +165,27 @@ public class QuestionMenu {
 				System.out.println("Please pick the number that represents the topic that the question would fall under!");
 				topic = s.nextInt();
 				s.nextLine();
+				System.out.println();
 			}
 			else {
-				System.out.print("There is no topic available currently for this question to fall under!");
+				System.out.println("There is no topic available currently for this question to fall under!");
 				topic = -1;
 			}
 
 			addQuestionText(s);
 			System.out.println("The hint of the question is: ");
 			hint = s.nextLine();
+			System.out.println();
 			System.out.println("The detailed explanation of the question is: ");
 			detailed_explanation = s.nextLine();
+			System.out.println();
 			System.out.println("The difficulty level of the question is (1-6): ");
 			difficulty_level = s.nextInt();
 			s.nextLine();
+			System.out.println();
 			if (difficulty_level > 6 || difficulty_level < 1 || type > 1 || type < 0) {
 				System.out.println("One of the question's variables is invalid. Please re-add the question!");
+				System.out.println();
 				check = 1;
 			}
 			else {
@@ -259,10 +274,12 @@ public class QuestionMenu {
 		if(check_insert == 0) {
 			System.out.println("The question was unsucessfully added, would you want to readd or add another answer?");
 			sp_decision = s.nextLine();
+			System.out.println();
 		}
 		else {
 			System.out.println("The question was sucessfully added, would you want to readd or add another answer?");
 			sp_decision = s.nextLine();
+			System.out.println();
 		}
 
 		if(sp_decision.toLowerCase().charAt(0) == 'y') {
@@ -299,19 +316,23 @@ public class QuestionMenu {
 			if(type == 1) {
 				System.out.print("The text of this paramterized question should include <?> where you want the parameter value to replace: \n");
 				question_text = s.nextLine();
+				System.out.println();
 				num_of_p = countSString(question_text);
 				if(num_of_p > 0 && num_of_p < 6) {
 					check = 1;
 					System.out.printf("There are %d parameters for this paramterized question.", num_of_p);
+					System.out.println();
 				}
 				else {
 					System.out.printf("There should only be 5 parameters at the max. \n Please readd this paramterized question text.");
+					System.out.println();
 					num_of_p = -1; 
 				}
 			}
 			else {
 				System.out.print("The text of this concrete question is: \n");
 				question_text = s.nextLine();
+				System.out.println();
 				check = 1;
 
 			}
@@ -483,7 +504,10 @@ public class QuestionMenu {
 				s.nextLine();
 			}
 			else {
-				System.out.print("There is no topic available currently!");
+				System.out.println("There is no topic available currently!");
+				System.out.println("Please add topics to proceed!");
+				Topics t = new Topics();
+				t.addTopic(conn, s);
 				return 1;
 			}
 			PreparedStatement stmt;
