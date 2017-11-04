@@ -378,12 +378,10 @@ public class Course {
     	Scanner scanner = new Scanner(System.in);
     	
     	// Display all available exercise_id for that user
-    	System.out.println("Test1");
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_ALLPASTEXEERCISE);
     	preparedStatement.setString(1, uid);
     	preparedStatement.setString(2, cid);
     	ResultSet rs_exercise = preparedStatement.executeQuery();
-    	System.out.println("Test2");
     	List<String> exerciseList = new ArrayList<String>();
     	
     	while (rs_exercise.next()) {
