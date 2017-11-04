@@ -2,6 +2,7 @@ package utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -238,6 +239,68 @@ public class Menu {
 	        "2. Past HWs\n" +
 	        "3. Logout\n" +
 			"******************************************\n");
+    }
+	
+	public static void studentViewPastHWTitleMenu() {
+		System.out.println(
+			"******************************************\n" +
+			"Student View of Past HWs: \n" +
+			"Please Make a Selection (9-10):\n" +
+			"******************************************\n" +
+			"0. Return to Previous Menu \n");
+			
+    }
+	
+	public static void studentViewReportDetailMessage() { 
+		System.out.println( "\n**Pleaes enter 9 for seeing the detailed report for each attempt.** \n"); 
+		}
+	
+	public static void studentViewReportDetailMemu() { 
+		System.out.println( 
+			"9. Detailed report for each attempt. \n" +
+			"10. Logout\n" +
+			"******************************************\n"); 
+		}
+	
+	public static void studentShowPastExeID(List<String> exerciseList) { 
+		System.out.println( 
+			"******************************************\n" +
+			"PAST HWs LIST (exercise_id you have done): \n" +
+			"******************************************\n"); 
+		
+		System.out.println(exerciseList);
+		}
+	
+	public static void studentSelectExeMessage() { System.out.println( "\n**Please select an exercise id from the PAST HWs LIST shown above.**"); }
+	
+	public static void studentShowAttempts(List<String> attemptList) { 
+		System.out.println( 
+			"******************************************\n" +
+			"ATTEMPT LIST: \n" +
+			"******************************************\n"); 
+		
+		System.out.println(attemptList);
+		}
+	
+	public static void studentSelectAttemptMessage() { System.out.println( "\n**Pleaes select an attempt from the ATTEMPT LIST shown above to view the details.**"); }
+	
+	
+	
+	//
+	public static void studentViewPastHWReportMenu() {
+		System.out.println(
+			"******************************************\n" +
+			"Student View of Past HW Reports: \n" +
+			"Please Make a Selection (1-3):\n" +
+			"******************************************\n" +
+			"0. Return to Previous Menu \n" +
+			"0. Return to Previous Menu \n" +
+			"0. Return to Previous Menu \n" +
+			"0. Return to Previous Menu \n" +
+			"0. Return to Previous Menu \n" +
+			"0. Return to Previous Menu \n" +
+			"** Past HW Infos:** \n");
+			
     }
 	
 	public static void studentProfileMessage(String sid, String sname, int syear, String stype) {

@@ -24,7 +24,7 @@ public class ExerciseMenu {
 			case GOBACK:  return;
 			case 1     :  ViewExercise(conn,cid);return;
 			case 2 	   :  newExercise(conn,cid);return;
-			default    : 	System.out.println("wrong choice please try again!!"); return;
+			default    :  System.out.println("wrong choice please try again!!"); return;
 		}
 
 	}
@@ -55,8 +55,25 @@ public class ExerciseMenu {
 		int exe_wrong_points=s.nextInt();
 		System.out.println("Enter Exercise's minimum difficulty level(1-5) ");
 		int exe_min_diff=s.nextInt();
+		if(exe_min_diff < 1 || exe_min_diff >5)
+		{
+			System.out.println("out of range values..try again!! ");
+			return ;
+		}
 		System.out.println("Enter Exercise's maximum difficulty level(1-5) ");
 		int exe_max_diff=s.nextInt();
+		if(exe_max_diff < 1 || exe_max_diff >5)
+		{
+			System.out.println("out of range values..try again!! ");
+			return ;
+		}
+		if(exe_max_diff < exe_min_diff)
+		{
+			System.out.println("maximum difficulty cannot be less than minimum. Try again!!");
+			return;
+		}		
+		System.out.println("Enter Exercise's mode 0:Standard mode 1:Adaptive mode");
+		int exe_mode = s.nextInt();
 		
 		try
 		{
@@ -72,7 +89,7 @@ public class ExerciseMenu {
 			}
 			last_id=last_id+1;
 
-			String make_exercise="Insert into EXERCISE values (?,?,?,?,?,?,?,?,?,?,?,?)";
+			String make_exercise="Insert into EXERCISE values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			stmt = conn.prepareStatement(make_exercise);
 			stmt.setInt(1, last_id);
 			stmt.setString(2, cid);
@@ -86,6 +103,7 @@ public class ExerciseMenu {
 			stmt.setInt(10, exe_wrong_points);
 			stmt.setInt(11, exe_min_diff);
 			stmt.setInt(12, exe_max_diff);
+			stmt.setInt(13, exe_mode);
 			stmt.executeQuery();
 			System.out.println("Succesfully entered an exercise. Go to set qestions for the exercise id="+last_id);
 			return;
@@ -109,13 +127,15 @@ public class ExerciseMenu {
 		int exerciseId = 0;
 		int choice = 0;
 		int lastQuerySuccess = 0;
+		ResultSet rs;
+		ResultSet qs;
 		Scanner s = new Scanner(System.in);
 
 				System.out.print("Please Enter Exercise ID: ");
 
 				exerciseId = s.nextInt();
 				lastQuerySuccess = queryExercise(conn, exerciseId);
-				
+				int quest_limit=0;
 				if (lastQuerySuccess == 1) { // set by latest query
 					System.out.println("0: Go back to previous menu. ");
 					System.out.println("1. Add  Questions to Exercise");
@@ -131,9 +151,38 @@ public class ExerciseMenu {
 					return;
 				} else {
 					if(choice==1)
-					{
-						exercise_add_question(conn,exerciseId,cid);
-					}
+						{ 
+							String limit_query="Select NUM_OF_QUESTIONS FROM EXERCISE where EXERCISE_ID=?";
+							String quest_count="select count(QUESTION_ID) AS C FROM EXERCISE_QUESTION where EXERCISE_ID=?";
+							try {
+								stmt=conn.prepareStatement(limit_query);
+								stmt.setInt(1, exerciseId);
+								rs=stmt.executeQuery();
+								if(rs.next())
+								{
+									int max_no=rs.getInt("NUM_OF_QUESTIONS");
+									stmt=conn.prepareStatement(quest_count);
+									stmt.setInt(1, exerciseId);
+									qs=stmt.executeQuery();
+									if(qs.next())
+									{
+										int current_no=qs.getInt(1);
+										if(current_no<max_no)
+										{
+											exercise_add_question(conn,exerciseId,cid);
+										}
+										else
+										{
+											System.out.println("Max count reached first remove question ");
+											return;
+										}
+									}	
+								}	
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
 					else
 					{
 						if(choice==2)
@@ -192,13 +241,14 @@ public class ExerciseMenu {
 	}
 	public static void exercise_add_question(Connection conn, int exerciseId, String cid)
 	{
-		
+		int choice=0;
 		Scanner sc=new Scanner(System.in);
 		String find_topic="select TOPIC_ID,TOPIC_NAME from TOPIC,COURSE where TOPIC.COURSE_ID=COURSE.COURSE_ID and COURSE.COURSE_ID=?";		
 		try {
 			
 			System.out.println("select a topicid \n ");
 		ResultSet rs;
+		ResultSet qs;
 		stmt = conn.prepareStatement(find_topic);
 		stmt.setString(1, cid);
 		rs=stmt.executeQuery();
@@ -227,15 +277,44 @@ public class ExerciseMenu {
 			System.out.println(topic_ids+" : "+topic_names);
 		}
 		System.out.println("select a questionids and press 0 to stop adding questions to add\n ");
-		int choice=sc.nextInt();
+		choice=sc.nextInt();
 		while(choice!=0)
 		{		
-				String add_query="Insert into EXERCISE_QUESTION values(?,?)";
-				stmt = conn.prepareStatement(add_query);
+				String limit_query="Select NUM_OF_QUESTIONS FROM EXERCISE where EXERCISE_ID=?";
+				String quest_count="select count(QUESTION_ID) AS C FROM EXERCISE_QUESTION where EXERCISE_ID=?";
+				try {
+				stmt=conn.prepareStatement(limit_query);
 				stmt.setInt(1, exerciseId);
-				stmt.setInt(2, choice);	
-				stmt.executeQuery();
-				choice=sc.nextInt();
+				rs=stmt.executeQuery();
+				if(rs.next())
+				{
+					int max_no=rs.getInt("NUM_OF_QUESTIONS");
+					stmt=conn.prepareStatement(quest_count);
+					stmt.setInt(1, exerciseId);
+					qs=stmt.executeQuery();
+					if(qs.next())
+					{
+						int current_no=qs.getInt(1);
+						if(current_no<max_no)
+						{
+							String add_query="Insert into EXERCISE_QUESTION values(?,?)";
+							stmt = conn.prepareStatement(add_query);
+							stmt.setInt(1, exerciseId);
+							stmt.setInt(2, choice);	
+							stmt.executeQuery();
+							choice=sc.nextInt();
+						}
+						else
+						{
+							System.out.println("Max count reached first remove question ");
+							return;
+						}
+					}	
+				}	
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}	
 
 			System.out.println("questions recorded !! going back");
@@ -285,6 +364,7 @@ public class ExerciseMenu {
 					int incorrect_answer_penalty = 0;
 					int difficulty_level_min = 0;
 					int difficulty_level_max = 0;
+					int exercise_mode=0;
 					///// for showing questions
 					String quest_text="";
 
@@ -299,6 +379,7 @@ public class ExerciseMenu {
 					incorrect_answer_penalty = rs.getInt("incorrect_answer_penalty");
 					difficulty_level_min = rs.getInt("difficulty_level_min");
 					difficulty_level_max = rs.getInt("difficulty_level_max");
+					exercise_mode=rs.getInt("exercise_mode");
 					
 					//System.out.println(user_id + fullName);
 					
@@ -312,6 +393,13 @@ public class ExerciseMenu {
 					System.out.println("Points for each correct answer: " + correct_answer_points);
 					System.out.println("Penalty points for each incorect answer: " + incorrect_answer_penalty);
 					System.out.println("Difficulty Level Range (max 1-5): " + difficulty_level_min + "-" + difficulty_level_max );
+					System.out.println("Exercise Mode:");
+					if(exercise_mode==0) {
+						System.out.print("Standard");
+						}
+					else {
+						System.out.print("Adaptive");
+					}
 					
 					//String quest_query="Select * from Question";
 					String quest_query="SELECT question.question_id,question.question_text FROM exercise,question,exercise_question WHERE exercise.exercise_id=? and exercise.exercise_id=exercise_question.exercise_id and question.question_id=exercise_question.question_id";
