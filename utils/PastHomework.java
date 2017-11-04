@@ -49,14 +49,21 @@ public class PastHomework {
 				total_pts_hw = correct_answer_points * num_of_questions;
 				student_score = calculate_score(conn, cid, uid, eid);
 				
-				System.out.println("Exercise Name: " + exercise_name);
-				System.out.println("Exercise Period: " + exercise_start + " - " + exercise_end);
-				System.out.println("Scoring Policy : " + scoring_policy);
-				System.out.println("Correct Answer points: " + correct_answer_points);
-				System.out.println("Incorrect Answer points: " + incorrect_answer_penalty);
-				System.out.println("Student's score according to the method: " + student_score);
-				System.out.println("Number of Available Attempts : " + retries_allowed);
-				System.out.println("Number of Student's Attempts : " + num_of_student_attempts);
+				System.out.println("1. Exercise Start: " + exercise_start);
+				System.out.println("2. Exercise End: " + exercise_end);
+				String e_mode = "";
+				if(mode == 0) {
+					e_mode = "Standard";
+				}
+				else {
+					e_mode = "Adaptive";
+				}
+				System.out.println("3. Type of this HW: " + e_mode);
+				System.out.println("4. Total Points of the HW: " + total_pts_hw);
+				System.out.println("5. Scoring Policy: " + scoring_policy);
+				System.out.println("6. Student's score according to the method: " + student_score);
+				System.out.println("7. Number of Available Attempts : " + retries_allowed);
+				System.out.println("8. Number of Student's Attempts : " + num_of_student_attempts);
 				clearSetting();
 			}
 		} catch (SQLException e) {
