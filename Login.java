@@ -73,7 +73,7 @@ public class Login extends ConnectionManager{
 			String uid = scanner.next();
 			
 			Menu.enterPasswordMessage();
-			String password = scanner.next();
+			String password = scanner.next();			
 			
 			int logRole = LoginInterface.loginRole(dbConnection, uid, password);
 			System.out.println(logRole);

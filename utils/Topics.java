@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Scanner;
 import sql.*;
 
@@ -36,7 +37,7 @@ public class Topics {
 				check = queryTopic(conn, t_id);
 				break;
 			case ADDT:
-				check = addTopic(conn, s);
+				check = addTopic(conn, s, "");
 				break;
 			case PREVIOUS:
 				check = 0;
@@ -89,9 +90,10 @@ public class Topics {
 	
 	} // end setProfile()
 
-	public static int addTopic(Connection conn, Scanner s) {
+	public static int addTopic(Connection conn, Scanner s, String cid) {
 		int check_add_topic = 0;
 		topic_id = findmaxid(conn, "topic_id", "TOPIC");
+		
 		System.out.println("\nThe name of the topic is: ");
 		topic_name = s.nextLine();
 	
@@ -100,6 +102,12 @@ public class Topics {
 			preparedStatement = conn.prepareStatement(SqlQueries.SQL_INSERTTOPIC);
 			preparedStatement.setInt(1, topic_id);
 			preparedStatement.setString(2, topic_name);
+			if(!cid.equals("")) {
+				preparedStatement.setString(3, cid);
+			}
+			else {
+				preparedStatement.setNull(3, Types.VARCHAR);
+			}
 			preparedStatement.execute();
 			check_add_topic = 1;
 			System.out.println();
