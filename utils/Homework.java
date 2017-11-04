@@ -24,7 +24,7 @@ public class Homework {
 	private static final int INCORRECT = 0;
 	
 	// difficulty level
-	private static final int DIFFICULTY_MAX = 6;
+	private static final int DIFFICULTY_MAX = 5;
 	private static final int DIFFICULTY_MIN = 1;
 	private static final int DIFFICULTY_START = 3;
 	
@@ -388,6 +388,19 @@ public class Homework {
     	// for each submission, get the latest attempt of the student of this exercise
     	int stuAttemptCount = 0; // attempt rows, be 0 if no attempt
     	int stuMaxAttempt = 0; // max attempt submitted
+    	int rewardPt = 0; // CORRECT_ANSWER_POINTS
+    	int penaltyPt = 0; // INCORRECT_ANSWER_PENALTY
+    	int finalPt = 0; // final points get in this submission
+    	
+    	
+    	// check score policy for current exercise
+		preparedStatement = connection.prepareStatement(SqlQueries.SQL_CHECKPOINTS);
+    	preparedStatement.setInt(1, exid);
+    	ResultSet rs_scoring = preparedStatement.executeQuery();
+    	if (rs_scoring.next()) {
+    		rewardPt = rs_scoring.getInt("CORRECT_ANSWER_POINTS");
+    		penaltyPt = rs_scoring.getInt("INCORRECT_ANSWER_PENALTY");    	
+    	}
     	
 		//System.out.println("debug SQL_STUDENTMAXATTEMPTQUESTION");
 
@@ -462,6 +475,16 @@ public class Homework {
     			stuMaxAttempt = rs_studentmaxattempt.getInt("MAXATTEMPT");
     			preparedStatement.setInt(8, stuMaxAttempt+1);
     		}
+    		
+    		// set final point
+    		if (correctness ==  CORRECT) {
+    			finalPt = rewardPt;
+    		} else if (correctness ==  INCORRECT) {
+    			finalPt = -penaltyPt;
+    		}
+    		
+			preparedStatement.setInt(9, finalPt); 
+
     		// execute insert
         	preparedStatement.executeQuery();
         	Menu.submitAnswerSuccessMessage();

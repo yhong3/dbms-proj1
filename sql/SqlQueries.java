@@ -92,8 +92,8 @@ public class SqlQueries {
     
     // Insert submits 
     public static final String SQL_INSERTSUBMITS = 
-    		" INSERT INTO SUBMITS(USER_ID, COURSE_ID, EXERCISE_ID, QUESTION_ID, PARAMETER_ID, CONCRETE_ANSWER_ID, PARAMETER_ANSWER_ID, ATTEMPT, SUBMIT_TIME) "
-    		+ " VALUES (?,?,?,?,?,?,?,?,to_date(sysdate,'DD-MON-RR'))";
+    		" INSERT INTO SUBMITS(USER_ID, COURSE_ID, EXERCISE_ID, QUESTION_ID, PARAMETER_ID, CONCRETE_ANSWER_ID, PARAMETER_ANSWER_ID, ATTEMPT, SUBMIT_TIME, ANSWER_SCORE) "
+    		+ " VALUES (?,?,?,?,?,?,?,?,to_date(sysdate,'DD-MON-RR'), ?)";
     
     // Get exercise questions, only need qid though.
     public static final String SQL_GETEXERCISEQUESTIONS = 
