@@ -310,10 +310,9 @@ public class Course {
  			  courseReturn = false;
  			   break;
 	    	
-	    	// TODO: 4. View Current/Past HWs
+	    	// 3. View Current/Past HWs
 	        case "3":
-	        	returnToRoot = studentViewHM(connection, cid, uid);
-	        	
+	        	returnToRoot = studentViewHM(connection, uid, cid);
 	        	break;
 	        	
 	        // Return to login page
@@ -351,7 +350,7 @@ public class Course {
    			   
     		case "1":
 	    		returnToRoot = studentViewCurrentHW(connection, cid, uid);
-	    		returnToRoot = false;
+    			homeworkView = false;
 	    		break;
     			
     		case "2":
@@ -468,7 +467,9 @@ public class Course {
     	
     	// query for available hw for this course
         int hwcount = 0;
-        System.out.println("debug Run SQL_CURRENTOPENHW");
+        //System.out.println("debug Run SQL_CURRENTOPENHW");
+        //System.out.println("debug cid" + cid);
+
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_CURRENTOPENHW);
     	preparedStatement.setString(1, cid);
     	ResultSet rs_openexercise = preparedStatement.executeQuery();
@@ -487,7 +488,7 @@ public class Course {
 	    			HWOptions.add(exid);
         		} else {
         			// check the current student max attempt     		
-        	        System.out.println("debug Run SQL_STUDENTMAXATTEMPT");
+        	        //System.out.println("debug Run SQL_STUDENTMAXATTEMPT");
 
         			preparedStatement = connection.prepareStatement(SqlQueries.SQL_STUDENTMAXATTEMPTEXERCISE);
         	    	preparedStatement.setInt(1, exid);

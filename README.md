@@ -1,4 +1,14 @@
 # DBMS Project 1
+
+## Coding Notes
+when sql is not giving back the desired result, check these
+1. press "sql commit" in the SQL developer
+2. the column index and input value in setInt() and setString(), etc.
+3. check if you are using 2 prepare statement at the same time (maybe using a query to determine value of another query)
+4. check if the query first, you need ';' at sql developer, but not in the preparedstatement
+5. sometimes add more space when concat different lines of queries
+
+## Set up oracle
 Tested on Win 10 with **CMD**, POWERSHELL NOT WORKING
 
 Start SQLPLUS as SYSDBA (in CMD)

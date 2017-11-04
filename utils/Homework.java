@@ -34,7 +34,7 @@ public class Homework {
 
 
     static Boolean attemptHomework(Connection connection, int exid, String uid, String cid) throws SQLException {
-    	System.out.println("debug attemptHomework");
+    	//System.out.println("debug attemptHomework");
     	// get exercise details
     	int ex_mode = 0;
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETEXERCISEDETAILS);
@@ -63,11 +63,11 @@ public class Homework {
     }
     
     private static void attemptStandardHomework(Connection connection, int exid, String uid, String cid) throws SQLException {
-    	System.out.println("debug attemptStandardHomework");
+    	//System.out.println("debug attemptStandardHomework");
 
     	// get questions, save id
     	ArrayList<Integer> questionIds = new ArrayList<Integer>();
-    	System.out.println("debug SQL_GETEXERCISEQUESTIONS");
+    	//System.out.println("debug SQL_GETEXERCISEQUESTIONS");
 
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETEXERCISEQUESTIONS);
     	preparedStatement.setInt(1, exid);
@@ -79,7 +79,7 @@ public class Homework {
     	
     	// randomize question order
     	Collections.shuffle(questionIds);
-    	System.out.println("debug questionIds = " + questionIds.toString());
+    	//System.out.println("debug questionIds = " + questionIds.toString());
     	// print each question and ask for answer
     	int currentQuestionNum = 1;
     	
@@ -92,7 +92,7 @@ public class Homework {
 			String curQHint = "";
 			String curQExp = "";
 			
-			System.out.println("debug SQL_GETQUESTIONDETAILS");
+			//System.out.println("debug SQL_GETQUESTIONDETAILS");
 			preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETQUESTIONDETAILS);
 	    	preparedStatement.setInt(1, curQId);
 	    	ResultSet rs_question = preparedStatement.executeQuery();
@@ -105,16 +105,16 @@ public class Homework {
 				curQHint = rs_question.getString("HINT");
 				curQExp = rs_question.getString("DETAILED_EXPLANATION");
 	    		
-    			System.out.println("debug curQType = " + curQType);
+    			//System.out.println("debug curQType = " + curQType);
 
 	    		if (curQType == CONCRETE) {
-	    			System.out.println("debug call showConcreteQuestion");
+	    			//System.out.println("debug call showConcreteQuestion");
 	    			showConcreteQuestion(connection, uid, cid, exid, curQId, curQText, currentQuestionNum);
 	    			// get correct answers, only choose 1
 	    			// get all incorrect answers in random order, choose 3
 
 	    		} else if (curQType == PARAMETERIZED) {
-	    			System.out.println("debug call showParamterizedQuestion");
+	    			//System.out.println("debug call showParamterizedQuestion");
 	    			showParamterizedQuestion(connection, uid, exid, cid, curQId, curQText, currentQuestionNum);
 	    		} // end show question
 	    		currentQuestionNum++;
@@ -123,7 +123,7 @@ public class Homework {
 
     }
     private static void attemptAdaptiveHomework(Connection connection, int exid, String uid, String cid) throws SQLException {
-    	System.out.println("debug attemptAdaptiveHomework");
+    	//System.out.println("debug attemptAdaptiveHomework");
     	// initialize variables
     	int num_of_questions = 0;
     	int diff_max = 0;
@@ -134,7 +134,7 @@ public class Homework {
 
     	ArrayList<Integer> usedQuestions = new ArrayList<Integer>();
     	
-    	System.out.println("debug SQL_GETEXERCISEDETAILS");
+    	//System.out.println("debug SQL_GETEXERCISEDETAILS");
     	// get exercise details: num of questions, difficulty range
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETEXERCISEDETAILS);
     	preparedStatement.setInt(1, exid);
@@ -150,7 +150,7 @@ public class Homework {
   
     	// ---
     	// get list of questions under desired exercise_topic and diff range in random order
-    	System.out.println("debug SQL_GETADAPTIVEQUESTIONS");
+    	//System.out.println("debug SQL_GETADAPTIVEQUESTIONS");
 
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETADAPTIVEQUESTIONS);
     	preparedStatement.setInt(1, exid);
@@ -161,10 +161,11 @@ public class Homework {
     		questionDiffs.add(rs_questionIds.getInt("DIFFICULTY_LEVEL"));
     	}
     	
-    	System.out.println("debug questionIds = " + questionIds.toString());
+    	//System.out.println("debug questionIds = " + questionIds.toString());
     	// print each question and ask for answer
     	
 		for (int i = 0; i < num_of_questions; i++) {
+			//System.out.println("debug current_diff " + i + " = " + current_diff);
 
 			// find the question that difficulty = current_diff
 			int correctness = INCORRECT;
@@ -177,7 +178,7 @@ public class Homework {
 			String curQHint = "";
 			String curQExp = "";
 			
-			System.out.println("debug SQL_GETQUESTIONDETAILS");
+			//System.out.println("debug SQL_GETQUESTIONDETAILS");
 			preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETQUESTIONDETAILS);
 	    	preparedStatement.setInt(1, curQId);
 	    	ResultSet rs_question = preparedStatement.executeQuery();
@@ -189,32 +190,31 @@ public class Homework {
 	    		curQDifficultyLv = rs_question.getInt("DIFFICULTY_LEVEL");
 				curQHint = rs_question.getString("HINT");
 				curQExp = rs_question.getString("DETAILED_EXPLANATION");
-	    		
-    			System.out.println("debug curQType = " + curQType);
-    			
+	    		    			
     			// After we are done, remove the question from the quesitonIds and questionDiffs
     			questionDiffs.remove(index);
     			questionIds.remove(index);
     			
     			// after submit, check if the result is CORRECT or INCORRECT    			
 	    		if (curQType == CONCRETE) {
-	    			System.out.println("debug call showConcreteQuestion");
+	    			//System.out.println("debug call showConcreteQuestion");
 	    			correctness = showConcreteQuestion(connection, uid, cid, exid, curQId, curQText, i+1);
 	    			// get correct answers, only choose 1
 	    			// get all incorrect answers in random order, choose 3
 
 	    		} else if (curQType == PARAMETERIZED) {
-	    			System.out.println("debug call showParamterizedQuestion");
+	    			//System.out.println("debug call showParamterizedQuestion");
 	    			correctness = showParamterizedQuestion(connection, uid, exid, cid, curQId, curQText, i+1);
 	    		} // end show question
 	    		
 	    		// update difficulty based on the result
+    			//System.out.println("debug correctness "+ correctness + " qid " + curQId + " current_diff " + current_diff + " curQType" + curQType);
 	    		if(correctness == CORRECT) {
-	    			correctness++;
-	    			if (correctness > diff_max) { current_diff = diff_max; }
+	    			current_diff++;
+	    			if (current_diff > diff_max) { current_diff = diff_max; }
 	    		} else if (correctness == INCORRECT) {
-	    			correctness--;
-	    			if (correctness < diff_min) { current_diff = diff_min; }
+	    			current_diff--;
+	    			if (current_diff < diff_min) { current_diff = diff_min; }
 	    		}
 	    	} // end of current question
 	    	
@@ -223,8 +223,8 @@ public class Homework {
     private static int showParamterizedQuestion(Connection connection, String uid, int exid, String cid, int qid, String qtext, int num) throws SQLException {
 		int correctness = INCORRECT; // initialize correctness for later return
 		
-    	System.out.println("debug showParamterizedQuestion");
-		System.out.println("debug qid" + qid);
+    	//System.out.println("debug showParamterizedQuestion");
+		//System.out.println("debug qid" + qid);
 
     	// choose a parameter_id in this question, print text
     	
@@ -241,7 +241,7 @@ public class Homework {
 		
     	// get a random parameter set and the answers linked to that
 		// get a random parameter id first
-    	System.out.println("debug SQL_GETRANDOMPARAMETER");
+    	//System.out.println("debug SQL_GETRANDOMPARAMETER");
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETRANDOMPARAMETER);
     	preparedStatement.setInt(1, qid);
     	ResultSet rs_pid = preparedStatement.executeQuery();
@@ -249,7 +249,7 @@ public class Homework {
     		pid = rs_pid.getInt("PARAMETER_ID"); // should be the same all the time
     	}
 
-    	System.out.println("debug SQL_GETPARAMETERIZEDANSWER");
+    	//System.out.println("debug SQL_GETPARAMETERIZEDANSWER");
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETPARAMETERIZEDANSWER);
     	preparedStatement.setInt(1, qid);
     	preparedStatement.setInt(2, pid);
@@ -258,7 +258,7 @@ public class Homework {
     	
     	// loop through the answers, should be 1 correct, 3 incorrect
     	while (rs_answers.next()) {
-    		System.out.println("debug ANSWERS");
+    		//System.out.println("debug ANSWERS");
 
     		aid = rs_answers.getInt("PARAMETER_ANSWER_ID");
     		atype = rs_answers.getInt("TYPE");
@@ -268,12 +268,11 @@ public class Homework {
     		answer_ids.add(aid);
     		answer_texts.add(atext);
     	}
-		System.out.println("debug answer_ids" + answer_ids.toString());
-		System.out.println("debug answer_texts" + answer_texts.toString());
+		//System.out.println("debug answer_ids" + answer_ids.toString());
+		//System.out.println("debug answer_texts" + answer_texts.toString());
 
     	// get the parameters from pid and qid
-		System.out.println("debug SQL_GETPARAMSBYPIDQID");
-		System.out.println("debug pid" + pid);
+		//System.out.println("debug SQL_GETPARAMSBYPIDQID pid = "+ pid);
 
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETPARAMSBYPIDQID);
     	preparedStatement.setInt(1, qid);
@@ -281,9 +280,8 @@ public class Homework {
     	ResultSet rs_params = preparedStatement.executeQuery();
 		
     	if (rs_params.next()) {
-    		System.out.println("debug PARAMS");
+    		//System.out.println("debug PARAMS");
 
-    		//PARAM_1,PARAM_2,PARAM_3,PARAM_4,PARAM_5
     		param_texts.add(rs_params.getString("PARAM_1"));
     		param_texts.add(rs_params.getString("PARAM_2"));
     		param_texts.add(rs_params.getString("PARAM_3"));
@@ -291,8 +289,7 @@ public class Homework {
     		param_texts.add(rs_params.getString("PARAM_5"));
     		
     	}
-		System.out.println("debug " + param_texts.toString());
-
+    	
     	// parse parameters from the qtext and set the parameters
 		Pattern p = Pattern.compile("\\<\\?\\>");
 		int pcount = 0;
@@ -330,7 +327,7 @@ public class Homework {
     }
     
     private static int showConcreteQuestion(Connection connection, String uid, String cid, int exid, int qid, String qtext, int num) throws SQLException {
-		System.out.println("debug showConcreteQuestion");
+		//System.out.println("debug showConcreteQuestion");
 
     	// initialize variables 
 		int correctness = INCORRECT; // initialize correctness for later return
@@ -344,7 +341,7 @@ public class Homework {
     	int pid = -1; // pid is really since we do not have paramter
     	
     	// execute sql query
-		System.out.println("debug SQL_GETCONCRETEANSWER");
+		//System.out.println("debug SQL_GETCONCRETEANSWER");
 
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETCONCRETEANSWER);
     	preparedStatement.setInt(1, qid);
@@ -387,12 +384,12 @@ public class Homework {
 
     private static int submitAnswer(Connection connection, String uid, String cid, int exid, int qid, int qtype, int pid, int aid) throws SQLException {
 		int correctness = INCORRECT; // initialize correctness for later return
-    	System.out.println("debug submitAnswer");
+    	//System.out.println("debug submitAnswer");
     	// for each submission, get the latest attempt of the student of this exercise
     	int stuAttemptCount = 0; // attempt rows, be 0 if no attempt
     	int stuMaxAttempt = 0; // max attempt submitted
     	
-		System.out.println("debug SQL_STUDENTMAXATTEMPTQUESTION");
+		//System.out.println("debug SQL_STUDENTMAXATTEMPTQUESTION");
 
 		preparedStatement = connection.prepareStatement(SqlQueries.SQL_STUDENTMAXATTEMPTQUESTION);
     	preparedStatement.setInt(1, exid);
@@ -401,7 +398,7 @@ public class Homework {
     	ResultSet rs_studentmaxattempt = preparedStatement.executeQuery();
     	if (rs_studentmaxattempt.next()) {
     		stuAttemptCount = rs_studentmaxattempt.getInt("ROWCNT");
-    		System.out.println("debug SQL_INSERTSUBMITS");
+    		//System.out.println("debug SQL_INSERTSUBMITS");
 
     		// create new attempt, set basic values
     		preparedStatement = connection.prepareStatement(SqlQueries.SQL_INSERTSUBMITS);
@@ -415,7 +412,7 @@ public class Homework {
 			// set parameter_id 
 			if (qtype == CONCRETE) {
 				// throw away pid, parameter_id = NULL
-	    		System.out.println("debug CONCRETEANS");
+	    		//System.out.println("debug CONCRETEANS");
 
     			preparedStatement.setNull(5, java.sql.Types.INTEGER);
     			preparedStatement.setInt(6, aid);
@@ -425,8 +422,8 @@ public class Homework {
     			preparedStatement2 = connection.prepareStatement(SqlQueries.SQL_CHECKCONCRETEANSWER);
     	    	preparedStatement2.setInt(1, qid);
     	    	preparedStatement2.setInt(2, aid);
-	    		System.out.println("debug qid" + qid);
-	    		System.out.println("debug aid" + aid);
+	    		//System.out.println("debug qid" + qid + "aid" + aid);
+	    		//System.out.println("debug aid" + aid);
 
     	    	ResultSet rs_correctness = preparedStatement2.executeQuery();
     	    	if(rs_correctness.next()) {
@@ -435,7 +432,7 @@ public class Homework {
     			
 			} else if (qtype == PARAMETERIZED) {
 				// take pid
-	    		System.out.println("debug PARAMANS");
+	    		//System.out.println("debug PARAMANS");
 
     			preparedStatement.setInt(5, pid);
     			preparedStatement.setNull(6, java.sql.Types.INTEGER);
@@ -446,9 +443,9 @@ public class Homework {
     	    	preparedStatement2.setInt(1, qid);
     	    	preparedStatement2.setInt(2, pid);
     	    	preparedStatement2.setInt(3, aid);
-    	    	System.out.println("debug qid" + qid);
-    	    	System.out.println("debug pid" + pid);
-	    		System.out.println("debug aid" + aid);
+    	    	//System.out.println("debug qid" + qid);
+    	    	//System.out.println("debug pid" + pid);
+	    		//System.out.println("debug aid" + aid);
     	    	ResultSet rs_correctness = preparedStatement2.executeQuery();
     	    	if(rs_correctness.next()) {
     	    		correctness = rs_correctness.getInt("TYPE");
