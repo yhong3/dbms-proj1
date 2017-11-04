@@ -423,7 +423,8 @@ public class Course {
     		//Student View Report i --> viii (1-8)
     		
     		//TODO: Insert Huy's function HERE
-    		
+    		PastHomework ph = new PastHomework();
+    		ph.pastHW(connection, uid, cid, eid);
     		//Student View Report ix (9)
     		Menu.studentViewReportDetailMemu();
     		
