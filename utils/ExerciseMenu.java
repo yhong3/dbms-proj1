@@ -43,8 +43,14 @@ public class ExerciseMenu {
 		String exe_startdate=s.nextLine();
 		System.out.println("Enter Exercise end date as yyyy-mm-dd:");
 		String exe_enddate=s.nextLine();
-		System.out.println("Enter Exercise retries allowed");
+		System.out.println("Enter Exercise retries allowed(1-3). Enter -1 for infinite");
 		int exe_retry_count=s.nextInt();
+		if(exe_retry_count>3 || (exe_retry_count<1 && exe_retry_count!=-1))
+		{
+			System.out.println(exe_retry_count);
+			System.out.println("values are out of range please try again!!");
+			return;
+		}
 		System.out.println("Enter no of questions in the exercise");
 		int exe_quest_count=s.nextInt();
 		System.out.println("Enter Exercise Scoring policy :\n 1: Latest attempt\n 2: Maximum Score 3: Average Score");
@@ -108,7 +114,12 @@ public class ExerciseMenu {
 			System.out.println("Succesfully entered an exercise. Go to set questions for the exercise id="+last_id);
 			return;
 		}
-		catch (Exception e) {
+		catch(IllegalArgumentException e)
+		{
+			System.out.println("Invalid Input!!Aborting");
+			return;
+		}
+		catch (SQLException e) {
 			System.out.println(e.getMessage());
 		} finally {
 			if (stmt != null) {
