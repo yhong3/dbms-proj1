@@ -102,5 +102,20 @@ public class TA extends Professor{
     	
     	return returnToRoot;
     }
+    
+    // Check if a student has been assigned as a TA for a certain course
+    static boolean checkTACourse (Connection connection, String sid, String cid) throws Throwable {
+    	
+    	Boolean stcourse = false; 
+    	PreparedStatement preparedStatement_stcourse = connection.prepareStatement(SqlQueries.SQL_CHECKTAENROLLCOURSE);
+    	preparedStatement_stcourse.setString(1, cid);
+    	preparedStatement_stcourse.setString(2, sid);
+    	ResultSet rs_senroll = preparedStatement_stcourse.executeQuery();
+    	if (rs_senroll.next()) {
+    		stcourse = true;
+    	}
+    	
+		return stcourse;
+    }
 
 }
