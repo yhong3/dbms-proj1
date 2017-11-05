@@ -263,4 +263,18 @@ public class Student {
 		return senroll;
     }
     
+    // Check student's enrollment of a course
+    static boolean checkStudentEnrollCourse(Connection connection, String sid) throws SQLException
+    {
+    	Boolean senroll = false; 
+    	PreparedStatement preparedStatement_senroll = connection.prepareStatement(SqlQueries.SQL_CHECKSTUENROLLCOURSE);
+    	preparedStatement_senroll.setString(1, sid);
+    	ResultSet rs_senroll = preparedStatement_senroll.executeQuery();
+    	if (rs_senroll.next()) {
+    		senroll = true;
+    	}
+    	
+		return senroll;
+    }
+    
 }
