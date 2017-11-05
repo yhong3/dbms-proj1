@@ -186,7 +186,7 @@ UNIQUE (exercise_id, topic_id)
 ----------------------------
 
 -- Enrolled student meets the course requirement with their level,
-CREATE OR REPLACE TRIGGER check_student_course_level
+CREATE OR REPLACE TRIGGER check_student_course_lv
 BEFORE INSERT OR UPDATE
 ON COURSE_STUDENT
 FOR EACH ROW
@@ -371,7 +371,7 @@ END;
 /
 -- Check if the exercise_id inserted to exercise_question table is in STANDARD MODE
 
-CREATE OR REPLACE TRIGGER check_exercise_question_is_standard
+CREATE OR REPLACE TRIGGER chk_ex_standard
 BEFORE INSERT OR UPDATE
 ON EXERCISE_QUESTION
 FOR EACH ROW
@@ -390,7 +390,7 @@ END;
 /
 -- Check the submits exists in the exercise_question before inserting (standard mode)
 
-CREATE OR REPLACE TRIGGER check_standard_submits_in_exercise_questoin
+CREATE OR REPLACE TRIGGER chk_std_submit
 BEFORE INSERT
 ON SUBMITS
 FOR EACH ROW
