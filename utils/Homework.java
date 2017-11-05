@@ -224,7 +224,6 @@ public class Homework {
 		int correctness = INCORRECT; // initialize correctness for later return
 		
     	//System.out.println("debug showParamterizedQuestion");
-		//System.out.println("debug qid" + qid);
 
     	// choose a parameter_id in this question, print text
     	
@@ -248,12 +247,13 @@ public class Homework {
     	if(rs_pid.next()) {
     		pid = rs_pid.getInt("PARAMETER_ID"); // should be the same all the time
     	}
+		System.out.println("debug qid" + qid + "pid " + pid);
+
 
     	//System.out.println("debug SQL_GETPARAMETERIZEDANSWER");
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETPARAMETERIZEDANSWER);
     	preparedStatement.setInt(1, qid);
     	preparedStatement.setInt(2, pid);
-    	System.out.println(preparedStatement.toString());
     	ResultSet rs_answers = preparedStatement.executeQuery();
     	
     	// loop through the answers, should be 1 correct, 3 incorrect

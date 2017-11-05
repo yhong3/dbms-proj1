@@ -65,16 +65,16 @@ Insert into COURSE_STUDENT (COURSE_ID,USER_ID) values ('CSC440','jander');
 Insert into COURSE_STUDENT (COURSE_ID,USER_ID) values ('CSC541','jharla');		
 Insert into COURSE_STUDENT (COURSE_ID,USER_ID) values ('CSC540','jmoyer');		
 
-Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (1,1,'Question 1?',1,2,'Hint text Q1','detailed Explanation Q1');
-Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (2,3,'Question 2?',1,3,'Hint text Q2','detailed Explanation Q2');
+Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (1,1,'Question 1?',0,2,'Hint text Q1','detailed Explanation Q1');
+Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (2,3,'Question 2?',0,3,'Hint text Q2','detailed Explanation Q2');
 Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (3,4,'Consider a disk with a <?>, <?>, <?>, <?>, <?>.',1,2,'Hint text Q3','detailed Explanation Q3');
 Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (4,4,'For <?>, <?>, <?>',1,4,'Hint text Q4','detailed Explanation Q4');
 Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (5,1,'what do you think about <?> for <?>?',1,5,'Hint text Q5','detailed Explanation Q5');
-Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (6,3,'Question 6?',1,3,'Hint text Q6','detailed Explanation Q6');
-Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (7,1,'Question 7?',1,1,'Hint text Q7','detailed Explanation Q7');
-Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (8,11,'Question 8?',1,3,'Hint text Q8','detailed Explanation Q8');
-Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (9,11,'Question 9?',1,5,'Hint text Q9','detailed Explanation Q9');
-Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (10,3,'Question 10?',1,1,'Hint text Q10','detailed Explanation Q10');
+Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (6,3,'Question 6?',0,3,'Hint text Q6','detailed Explanation Q6');
+Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (7,1,'Question 7?',0,1,'Hint text Q7','detailed Explanation Q7');
+Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (8,11,'Question 8?',0,3,'Hint text Q8','detailed Explanation Q8');
+Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (9,11,'Question 9?',0,5,'Hint text Q9','detailed Explanation Q9');
+Insert into QUESTION (QUESTION_ID,TOPIC_ID,QUESTION_TEXT,TYPE,DIFFICULTY_LEVEL,HINT,DETAILED_EXPLANATION) values (10,3,'Question 10?',0,1,'Hint text Q10','detailed Explanation Q10');
 
 ----- FOR adaptive question, different difficulty
 

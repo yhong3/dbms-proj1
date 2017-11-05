@@ -84,7 +84,7 @@ hint VARCHAR(50) NOT NULL,
 detailed_explanation VARCHAR(150) NOT NULL,
 FOREIGN KEY (topic_id) REFERENCES TOPIC ON DELETE CASCADE,
 PRIMARY KEY (question_id),
-CONSTRAINT check_ques_diff CHECK (type IN (1,2,3,4,5)),
+CONSTRAINT check_ques_diff CHECK (difficulty_level IN (1,2,3,4,5)),
 CONSTRAINT check_ques_type CHECK (type IN (0,1))
 );
 
