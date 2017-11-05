@@ -372,13 +372,14 @@ public class Course {
     			
     		case "2":
     			ArrayList<String> past_exes = pastSubmissions(connection, uid, cid);
-			if(past_exes.isEmpty()) {
-				System.out.println("There is no past homework to show yet!");
-			}
-			else {
-				String eid = studentChoosePastHM(connection, uid, cid, past_exes);
-				returnToRoot = studentViewPastHM(connection, uid, cid, eid);
-			}
+				if(past_exes.isEmpty()) {
+					System.out.println("There is no past homework to show yet!");
+				}
+				else {
+					String eid = studentChoosePastHM(connection, uid, cid, past_exes);
+					returnToRoot = studentViewPastHM(connection, uid, cid, eid);
+				}
+				break;
     			
     		case "3":
 	        	Menu.returnLoginMessage();
@@ -439,7 +440,7 @@ public class Course {
     		switch (selection) {
     		case "0": 
     			pastCourseView = false;
-            		break;
+        		break;
     		
     		case "9":
     			// Show all the attempt student has for that exercise
@@ -448,13 +449,13 @@ public class Course {
     			break;
     			
     		case "10":
-			Menu.returnLoginMessage();
-			returnToRoot = false;
-			return returnToRoot;
+				Menu.returnLoginMessage();
+				returnToRoot = false;
+				return returnToRoot;
 			
-		default:
-			Menu.warningMessage();
-			break;
+			default:
+				Menu.warningMessage();
+				break;
     		}//end switch
     	}//end while
     	return returnToRoot;
@@ -848,7 +849,7 @@ public class Course {
 
 			// 3-5
 			String question_type = "concrete";
-				anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type, corr_points, incorr_points);
+			anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type, corr_points, incorr_points);
 		}
 		
  		return anscorrIdx;

@@ -273,7 +273,7 @@ public class Menu {
 			"Student View of Past HWs: \n" +
 			"Please Make a Selection (9-10):\n" +
 			"******************************************\n" +
-			"0. Return to Previous Menu \n");
+			"0. Return to Previous Menu");
 			
     }
 	
