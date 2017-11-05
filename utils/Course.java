@@ -721,7 +721,6 @@ public class Course {
     	
 	// 3. Solution for each question
 	// Display the hints/solutions for each question
-	// TODO: Confirm: If submit_time is after exercise_due?? Or compare current time with exercise_due??
 	ZoneId z = ZoneId.of( "America/New_York" ); // use the new_york time zone to determine current date
 	LocalDate currentZoneDate = LocalDate.now(z);
 	java.util.Date currentDate = java.sql.Date.valueOf(currentZoneDate);
