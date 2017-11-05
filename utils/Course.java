@@ -23,10 +23,9 @@ import utils.Student;
 import utils.TA;
 
 public class Course {
-	
 	private static PreparedStatement preparedStatement;
 
-    static Boolean instructorViewCourse(Connection connection, String uid, String cid) throws Throwable {
+ 	static Boolean instructorViewCourse(Connection connection, String uid, String cid) throws Throwable {
     	
     	Scanner scanner = new Scanner(System.in);
     	String selection = "1";
@@ -57,7 +56,7 @@ public class Course {
 	    		courseView = false;
         		break;
 	    	
-	    	// TODO: 3. View/Add Exercise
+	    	// 3. View/Add Exercise
 	        case "3": 
 			ExerciseMenu.ViewExerciseMenu(connection,cid);
 	        	break;
@@ -91,15 +90,6 @@ public class Course {
     	return returnToRoot;
     }
     
-    // TODO: View/Add Exercise:  Instructors view exercises
-    static void instructorViewAddExecise(Connection connection, String uid) throws Throwable {
-    	
-    	String exercise_selection = "1"; // selection for View/Add Exercise
-    	Scanner scanner = new Scanner(System.in);
-    	
-    	
-    }
-    
     // View/Add TA:  Instructors view/add TAs for the course
     static Boolean instructorViewAddTA(Connection connection, String uid, String cid) throws Throwable {
     	
@@ -119,24 +109,24 @@ public class Course {
         		studentReturn = false;
         		break;
         	// View/Add TA --> View TA
-            case "1":
-            	viewTA(connection, cid);
-            	break;
+	 	case "1":
+			viewTA(connection, cid);
+			break;
         	// View/Add TA --> Add TA
-            case "2":
-            	instructorEnrollTA(connection, cid);
-            	break;
+            	case "2":
+            		instructorEnrollTA(connection, cid);
+            		break;
                 
-            case "3":
-            	Menu.returnLoginMessage();
-            	returnToRoot = false;
-            	return returnToRoot;
-            	
-            default:
-            	Menu.warningMessage();
-            	break;
+	 	case "3":
+			Menu.returnLoginMessage();
+			returnToRoot = false;
+			return returnToRoot;
+				
+            	default:
+			Menu.warningMessage();
+			break;
 	            
-            }//end switch
+            	}//end switch
     	}//end while
     	return returnToRoot;
     }
@@ -181,7 +171,7 @@ public class Course {
  	  return returnToRoot;
     }
     
- // View/Add TA --> Add TA:  Instructor enroll a student as TA
+// View/Add TA --> Add TA:  Instructor enroll a student as TA
     static void instructorEnrollTA(Connection connection, String cid) throws Throwable {
     	
     	Scanner scan = new Scanner(System.in);
@@ -190,27 +180,37 @@ public class Course {
     	System.out.println("Please Enter the TA's user_id: \n");
     	String sid = scan.nextLine();
     	
-    	boolean tapermit = false; 
+    	// Check student type
+    	String tempType = Student.checkStudentType(connection, sid);
     	
-    	// Student enrolled in the system, not enrolled in the course, and has the type of "Graduate"
-    	if (Student.checkStudentSysEnrollment(connection, sid) && Course.checkCourseRequirement(connection, sid, cid) && !tapermit)
+    	// Student enrolled in the system, not enrolled in the course, has the type of "Graduate", and not already been set as the TA for this course    	
+    	if (Student.checkStudentSysEnrollment(connection, sid) && !checkStudentEnrollment(connection, sid, cid) 
+    			&& checkTARequirement(connection, sid) && !TA.checkTACourse (connection, sid, cid))
     	{ addTA(connection, cid, sid); }
     	
-    	// Student enrolled in the system, not enrolled in the course, and has the type of "Undergraduate"
-    	else if (Student.checkStudentSysEnrollment(connection, sid) && Course.checkCourseRequirement(connection, sid, cid) && tapermit)
+    	// Student not enrolled in the system
+    	else if (!Student.checkStudentSysEnrollment(connection, sid))
+    	{ Menu.enrollNoneStudentFailMessage(); } 
+    	
+    	// Student has already been enrolled in the course
+    	else if (checkStudentEnrollment(connection, sid, cid))
+    	{ Menu.enrollStuEnrollFailureMessage(); }
+    	
+    	// Student has the type of "Undergraduate"
+    	else if (!checkTARequirement(connection, sid))
     	{ Menu.enrollTALevelFailureMessage(); }
     	
-    	// Student enrolled in the system, have already been enrolled in the course
-    	else if (Student.checkStudentSysEnrollment(connection, sid) && !Course.checkCourseRequirement(connection, sid, cid))
-    	{ Menu.enrollStuEnrollFailureMessage();}
+    	// Student has already been set as the TA for this course
+    	else if ( TA.checkTACourse (connection, sid, cid))
+    	{ Menu.enrollStuRedoFailureMessage(); }	
     	
-    	// Student not enrolled in the system
-    	else { Menu.enrollNoneStudentFailMessage(); }
+    	// Else
+    	else { System.out.println("\n**Cannot recognize your input.**"); }
     	
     	Menu.returnToMenuCommand();
     }
-    
-    // Check if a course exist in system
+	
+// Check if a course exist in system
     static boolean checkCourseExist(Connection connection, String cid) throws Throwable {
     	
     	Boolean cexist = false; 
@@ -223,7 +223,6 @@ public class Course {
     	}
     	return cexist;
     }
-    
     
     // Check if student has the same level (Undergraduate/Graduate with the course requirement)
     static boolean checkCourseRequirement(Connection connection, String sid, String cid) throws Throwable {
@@ -245,7 +244,25 @@ public class Course {
     		slevel = rs_slevel.getString("TYPE");
     	}
 
-		if (clevel != null && slevel != null && (clevel.contains(slevel)) || slevel.contains(clevel)) { return true; }
+	if (clevel != null && slevel != null && (clevel.contains(slevel)) || slevel.contains(clevel)) { return true; }
+    	else { return false; }
+    	
+    }
+	
+// Check if a student meet the requirement of TA
+    static boolean checkTARequirement(Connection connection, String sid) throws Throwable {
+
+    	String slevel = null;
+    	
+    	PreparedStatement preparedStatement_slevel = connection.prepareStatement(SqlQueries.SQL_STUDENTPROFILE);
+    	preparedStatement_slevel.setString(1, sid);
+    	ResultSet rs_slevel = preparedStatement_slevel.executeQuery();
+    	if (rs_slevel.next()) {
+    		slevel = rs_slevel.getString("TYPE");
+    	}
+    	
+    	String tlevel = "Grad";
+		if (tlevel.contains(slevel) || slevel.contains(tlevel)) { System.out.println("Testtesttest"); return true; }
     	else { return false; }
     	
     }
@@ -406,13 +423,13 @@ public class Course {
     	Boolean returnToRoot = true;
     	
     	
-    	while (selection != "7" && pastCourseView && returnToRoot) {
+    	while (selection != "10" && pastCourseView && returnToRoot) {
     		
     		Menu.studentViewPastHWTitleMenu();
     		
     		//Student View Report i --> viii (1-8)
     		
-    		//TODO: Insert Huy's function HERE
+    		//Insert Huy's function HERE
     		PastHomework ph = new PastHomework();
     		ph.pastHW(connection, uid, cid, eid);
     		//Student View Report ix (9)
@@ -423,7 +440,7 @@ public class Course {
     		switch (selection) {
     		case "0": 
     			pastCourseView = false;
-            	break;
+            		break;
     		
     		case "9":
     			// Show all the attempt student has for that exercise
@@ -432,13 +449,13 @@ public class Course {
     			break;
     			
     		case "10":
-            	Menu.returnLoginMessage();
-            	returnToRoot = false;
-            	return returnToRoot;
-
-            default:
-            	Menu.warningMessage();
-            	break;
+			Menu.returnLoginMessage();
+			returnToRoot = false;
+			return returnToRoot;
+			
+		default:
+			Menu.warningMessage();
+			break;
     		}//end switch
     	}//end while
     	return returnToRoot;
@@ -620,32 +637,30 @@ public class Course {
     			System.out.println("***********************************");
     			anscorrIdx = ConcreteQuestionAnswer(connection, uid, questionList.get(i), conAnswerList.get(i), dateList.get(i));
     		}
-			// If question type is 1 (parameter)
+		// If question type is 1 (parameter)
     		else {
-				System.out.println("\n***********************************");
-				System.out.println("The answer of Quesiton " + questionList.get(i) + ": ");
-				System.out.println("***********************************");
-				
-				// Generate the text for question
-				preparedStatement = connection.prepareStatement(SqlQueries.SQL_PARAQUESTIONTEXT);
-				preparedStatement.setString(1, questionList.get(i));
-				ResultSet rs_paraQuesText = preparedStatement.executeQuery();
-				
-				String temp_paraText = null; 
-				while (rs_paraQuesText.next()) {
-					temp_paraText = rs_paraQuesText.getString("QUESTION_TEXT");
-				}
-				anscorrIdx = parameterQuestionAnswer(connection, uid, temp_paraText, questionList.get(i), paraAnswerList.get(i), dateList.get(i));    	    	
+			System.out.println("\n***********************************");
+			System.out.println("The answer of Quesiton " + questionList.get(i) + ": ");
+			System.out.println("***********************************");
+
+			// Generate the text for question
+			preparedStatement = connection.prepareStatement(SqlQueries.SQL_PARAQUESTIONTEXT);
+			preparedStatement.setString(1, questionList.get(i));
+			ResultSet rs_paraQuesText = preparedStatement.executeQuery();
+
+			String temp_paraText = null; 
+			while (rs_paraQuesText.next()) {
+				temp_paraText = rs_paraQuesText.getString("QUESTION_TEXT");
+			}
+			anscorrIdx = parameterQuestionAnswer(connection, uid, temp_paraText, questionList.get(i), paraAnswerList.get(i), dateList.get(i));    	    	
     		}//end parameter answers
     		
     		if (anscorrIdx == true) { count_corrans += 1; }
-			else { count_incorrans += 1; }
+		else { count_incorrans += 1; }
 		}//end answers for each attempt
     	
     	// Total points for that attempt
-    	// 6. Total points for that attempt
-		// TODO: Confirm: total score should not be less than 0?? 
-    	
+    	// 6. Total points for that attempt    	
     	// Check the CORRECT_ANSWER_POINTS and INCORRECT_ANSWER_PENALTY given eid
     	
     	PreparedStatement preparedStatement_apoint = connection.prepareStatement(SqlQueries.SQL_CHECKPOINTS);
@@ -661,42 +676,42 @@ public class Course {
     		temp_incoPoint = rs_apoint.getInt("INCORRECT_ANSWER_PENALTY");
     	}
     	
+	System.out.println();
+	int total_score = temp_coPoint*count_corrans + ((-1)*temp_incoPoint)*count_incorrans;
+	// If the total score > 0, display the total score
+	if (total_score > 0) {
 		System.out.println();
-		int total_score = temp_coPoint*count_corrans + ((-1)*temp_incoPoint)*count_incorrans;
-		// If the total score > 0, display the total score
-		if (total_score > 0) {
-			System.out.println();
-			System.out.println("\n***********************************");
-			System.out.println("**6. Total points for that attempt**");
-			System.out.println("Points scored for this question is: " + Integer.toString(total_score));
-			System.out.println("***********************************");
-		}
-		// Else if the total score <= 0, display the total score as 0 
-		else {
-			System.out.println();
-			System.out.println("\n***********************************");
-			System.out.println("**6. Total points for that attempt**");
-			System.out.println("Points scored for this question is: 0");
-			System.out.println("***********************************");
-		}
-		
-		Menu.returnToMenuCommand();
+		System.out.println("\n***********************************");
+		System.out.println("**6. Total points for that attempt**");
+		System.out.println("Points scored for this question is: " + Integer.toString(total_score));
+		System.out.println("***********************************");
+	}
+	// Else if the total score <= 0, display the total score as 0 
+	else {
+		System.out.println();
+		System.out.println("\n***********************************");
+		System.out.println("**6. Total points for that attempt**");
+		System.out.println("Points scored for this question is: 0");
+		System.out.println("***********************************");
+	}
+
+	Menu.returnToMenuCommand();
     }
     
 
     // Count the number of parameters in a question
     static int countSString(String str) {
-		Pattern p = Pattern.compile("<\\s*\\?\\s*>");
-		Matcher matcher = p.matcher(str);
-	    int count = 0;
-	    int pos = 0;
-	    while (matcher.find(pos))
-	    {
-	        count++;
-	        pos = matcher.start() + 1;
-	    }
-		return count;
+	Pattern p = Pattern.compile("<\\s*\\?\\s*>");
+	Matcher matcher = p.matcher(str);
+    	int count = 0;
+    	int pos = 0;
+    	while (matcher.find(pos))
+	{
+		count++;
+		pos = matcher.start() + 1;
 	}
+	return count;
+    }
     
     // Detailed report for each attempt display
     static boolean DetailedReportDisplay(String answer_type, String short_explanation, String answer_hint, Date exercise_due,
@@ -704,49 +719,48 @@ public class Course {
 
     	Boolean corransIdx = true;
     	
-		// 3. Solution for each question
-		// Display the hints/solutions for each question
-		// TODO: Confirm: If submit_time is after exercise_due?? Or compare current time with exercise_due??
-		ZoneId z = ZoneId.of( "America/New_York" ); // use the new_york time zone to determine current date
-		LocalDate currentZoneDate = LocalDate.now(z);
-		java.util.Date currentDate = java.sql.Date.valueOf(currentZoneDate);
-		
-		// If current data after the exercise due, show the explanation
-		if (currentDate.compareTo(exercise_due) > 0) {
-			System.out.println();
-			System.out.println("**3. Solution for this question**");
-			System.out.println("Short Explanation: " + short_explanation);
-		}
-		// Else of current data before the exercise due, show the hint
-		else {
-			System.out.println();
-			System.out.println("**3. Solution for this question**");
-			System.out.println("Question Hint: " + answer_hint);
-		}
-		
-		// 4. Whether the selected answer was correct or not (type_0: Incorrect; type_1: Correct)
-		// 5. Points scored for each question
-		// TODO: Confirm: is each question 3 points? 
-		
-		if (answer_type.equals("0")) { 
-			System.out.println();
-			System.out.println("**4. Whether the selected answer was correct or not**");
-			System.out.println("Answer for this question is: " + "Incorrect");
-			System.out.println();
-			System.out.println("**5. Points scored for this question**");
-			System.out.println("Points scored for this question is: " + incorr_points);
-			corransIdx = false;
-		}
-		
-		else { 
-			System.out.println();
-			System.out.println("**Whether the selected answer was correct or not**");
-			System.out.println("Answer for this question is: " + "Correct");
-			System.out.println();
-			System.out.println("**Points scored for this question**");
-			System.out.println("Points scored for this question is: " + corr_points);
-		}
-		return corransIdx;
+	// 3. Solution for each question
+	// Display the hints/solutions for each question
+	// TODO: Confirm: If submit_time is after exercise_due?? Or compare current time with exercise_due??
+	ZoneId z = ZoneId.of( "America/New_York" ); // use the new_york time zone to determine current date
+	LocalDate currentZoneDate = LocalDate.now(z);
+	java.util.Date currentDate = java.sql.Date.valueOf(currentZoneDate);
+
+	// If current data after the exercise due, show the explanation
+	if (currentDate.compareTo(exercise_due) > 0) {
+		System.out.println();
+		System.out.println("**3. Solution for this question**");
+		System.out.println("Short Explanation: " + short_explanation);
+	}
+	// Else of current data before the exercise due, show the hint
+	else {
+		System.out.println();
+		System.out.println("**3. Solution for this question**");
+		System.out.println("Question Hint: " + answer_hint);
+	}
+
+	// 4. Whether the selected answer was correct or not (type_0: Incorrect; type_1: Correct)
+	// 5. Points scored for each question
+
+	if (answer_type.equals("0")) { 
+		System.out.println();
+		System.out.println("**4. Whether the selected answer was correct or not**");
+		System.out.println("Answer for this question is: " + "Incorrect");
+		System.out.println();
+		System.out.println("**5. Points scored for this question**");
+		System.out.println("Points scored for this question is: " + incorr_points);
+		corransIdx = false;
+	}
+
+	else { 
+		System.out.println();
+		System.out.println("**Whether the selected answer was correct or not**");
+		System.out.println("Answer for this question is: " + "Correct");
+		System.out.println();
+		System.out.println("**Points scored for this question**");
+		System.out.println("Points scored for this question is: " + corr_points);
+	}
+	return corransIdx;
     }
     
     // Display of concrete questions & answers
@@ -785,16 +799,16 @@ public class Course {
 			
 			System.out.println("**1. Question in this attempt**");
 			System.out.println("Concrete Answers from Question ID: " + qid);
-    		System.out.println("Question text : " + question_text);
-			
-    		// 2. Answers selected by the student for each attempt
-    		System.out.println();
-    		System.out.println("**2. Answers selected by the student for this Question**");
-    		System.out.println("Answer text : " + answer_text);
-    		
-    		// 3-5
-    		String question_type = "concrete";
-			anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type, corr_points, incorr_points);
+			System.out.println("Question text : " + question_text);
+
+			// 2. Answers selected by the student for each attempt
+			System.out.println();
+			System.out.println("**2. Answers selected by the student for this Question**");
+			System.out.println("Answer text : " + answer_text);
+
+			// 3-5
+			String question_type = "concrete";
+				anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type, corr_points, incorr_points);
 		}
 		
  		return anscorrIdx;
@@ -855,10 +869,10 @@ public class Course {
  				}
  				
  				while (m.find()) {
- 		        	s = m.replaceFirst(parameters[count]);
- 		        	m = p.matcher(s);
- 		        	count += 1;
- 		        }
+					s = m.replaceFirst(parameters[count]);
+					m = p.matcher(s);
+					count += 1;
+				}
  				
  				System.out.println("**1. Question in this attempt**");
  				System.out.println("Parameter Answers from Question ID: " + qid);
@@ -869,14 +883,14 @@ public class Course {
  					System.out.print(parameters[j] + "  ");
  				}
  				
- 	    		// 2. Answers selected by the student for each attempt
- 	    		System.out.println();
- 	    		System.out.println("**2. Answers selected by the student for this Question**");
- 	    		System.out.println("Answer text : " + answer_text); 				
- 				
- 	    		// 3-5
- 				String question_type = "parameter";
- 				anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type, corr_points, incorr_points);
+				// 2. Answers selected by the student for each attempt
+				System.out.println();
+				System.out.println("**2. Answers selected by the student for this Question**");
+				System.out.println("Answer text : " + answer_text); 				
+
+				// 3-5
+				String question_type = "parameter";
+				anscorrIdx = DetailedReportDisplay( answer_type, short_explanation, answer_hint, exercise_due, question_type, corr_points, incorr_points);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -936,21 +950,21 @@ public class Course {
 	        	break;
 	        	
 	        case "7":
-            	Menu.returnLoginMessage();
-            	returnToRoot = false;
-            	return returnToRoot;
+			Menu.returnLoginMessage();
+			returnToRoot = false;
+			return returnToRoot;
 
-            default:
-            	Menu.warningMessage();
-            	break;
+		default:
+			Menu.warningMessage();
+			break;
             
 	    	}//end switch
     	}//end while
     	return returnToRoot;
     }
     
-    static void viewTA(Connection connection, String cid) throws SQLException 
-	{
+    static void viewTA(Connection connection, String cid) throws SQLException {
+	    
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_TAPROFILE);
     	preparedStatement.setString(1, cid);
     	
@@ -967,16 +981,16 @@ public class Course {
         }
     	
     	Menu.returnToMenuCommand();
-	}
+    }
 	
 	static void addTA(Connection connection, String cid, String sid) throws SQLException {
-		      
-    	preparedStatement = connection.prepareStatement(SqlQueries.SQL_ENROLLTACOURSE);
-    	preparedStatement.setString(1, cid);
-    	preparedStatement.setString(2, sid);
-    	preparedStatement.execute();
-		
-    	Menu.enrollTASuccessMessage(sid, cid);
+
+		preparedStatement = connection.prepareStatement(SqlQueries.SQL_ENROLLTACOURSE);
+		preparedStatement.setString(1, cid);
+		preparedStatement.setString(2, sid);
+		preparedStatement.execute();
+
+		Menu.enrollTASuccessMessage(sid, cid);
 	}
 
 	static ArrayList<String> pastExes(Connection conn, String cid, String sid){
