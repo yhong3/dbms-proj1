@@ -216,7 +216,7 @@ public class ExerciseMenu {
 		stmt = conn.prepareStatement(see_quest);
 		stmt.setInt(1, exerciseId);
 		rs=stmt.executeQuery();
-		System.out.println("enter the question id that you want to delete....press 0 when Done");
+		System.out.println("enter the question id that you want to delete..questions that don't exists will be ignored....press 0 when Done");
 		if (!rs.isBeforeFirst() ) {    
 		    System.out.println("questions don't exist"); 
 		    return;
@@ -267,6 +267,7 @@ public class ExerciseMenu {
 		stmt = conn.prepareStatement(find_topic);
 		stmt.setString(1, cid);
 		rs=stmt.executeQuery();
+		ResultSet check_question;
 		
 		while(rs.next())
 		{
@@ -282,7 +283,7 @@ public class ExerciseMenu {
 		rs=stmt.executeQuery();
 		
 		if (!rs.isBeforeFirst() ) {    
-		    System.out.println("questions don't exist"); 
+		    System.out.println("topic doesn't exist"); 
 		    return;
 		} 
 		while(rs.next())
@@ -312,6 +313,22 @@ public class ExerciseMenu {
 						int current_no=qs.getInt(1);
 						if(current_no<max_no)
 						{
+							String quest_already="select * from exercise_question where question_id=?"; 		// check if question is already in the exercise
+							String quest_exists="select * from question where question_id=?";					// check if question exists
+							stmt = conn.prepareStatement(quest_exists);
+							stmt.setInt(1, choice);	
+							check_question=stmt.executeQuery();
+							if(!check_question.isBeforeFirst()) {    
+								System.out.println("question doesn't exist!! aborting..start over again"); 
+								return;
+							} 
+							stmt = conn.prepareStatement(quest_already);
+							stmt.setInt(1, choice);	
+							check_question=stmt.executeQuery();
+							if(check_question.next()) {
+								System.out.println("question already exists in the exercise!! aborting..start over again");
+								return;
+							}
 							String add_query="Insert into EXERCISE_QUESTION values(?,?)";
 							stmt = conn.prepareStatement(add_query);
 							stmt.setInt(1, exerciseId);
@@ -352,9 +369,11 @@ public class ExerciseMenu {
 	public static void adaptive_exercise_add_question(Connection conn, int exerciseId, String cid)
 	{
 		int choice=0;
+		ResultSet check_topic;
 		Scanner sc=new Scanner(System.in);
 		String find_topic="select TOPIC_ID,TOPIC_NAME from TOPIC,COURSE where TOPIC.COURSE_ID=COURSE.COURSE_ID and COURSE.COURSE_ID=?";		
 		String add_topic="Insert into Exercise_topic values(?,?)";
+		String topic_exists = "Select * from topic where topic_id=?";
 		try {
 			
 				System.out.println("select a topicid \n ");
@@ -373,14 +392,20 @@ public class ExerciseMenu {
 				choice=sc.nextInt();
 				while(choice!=0)
 				{		
-
+					stmt = conn.prepareStatement(topic_exists);
+					stmt.setInt(1, choice);	
+					check_topic=stmt.executeQuery();
+					if(!check_topic.isBeforeFirst()) {    
+						System.out.println("topic doesn't exist!! aborting..start over again"); 
+						return;
+					} 
 					stmt=conn.prepareStatement(add_topic);
 					stmt.setInt(1, exerciseId);
 					stmt.setInt(2, choice);
 					stmt.executeQuery();
 					choice=sc.nextInt();				
 				}	
-				System.out.println("questions recorded !! going back");
+				System.out.println("topics recorded !! going back");
 				return;
 			}
 		catch (Exception e) {
