@@ -186,7 +186,7 @@ UNIQUE (exercise_id, topic_id)
 ----------------------------
 
 -- Enrolled student meets the course requirement with their level,
-CREATE OR REPLACE TRIGGER check_studentLevel_euquals_courseLevel
+CREATE OR REPLACE TRIGGER check_student_course_level
 BEFORE INSERT OR UPDATE
 ON COURSE_STUDENT
 FOR EACH ROW

@@ -4,10 +4,10 @@
 CSC 540 Fall 2017
 Team Q
 
-Yu-Lun Hong (yhong3)
-Ashwin Risbood (arisboo)
-Huy Tu (hqtu)
-Xi Yang (yxi2)
+* Yu-Lun Hong (yhong3)
+* Ashwin Risbood (arisboo)
+* Huy Tu (hqtu)
+* Xi Yang (yxi2)
 
 ## Set up oracle
 Tested on Win 10 with **CMD**, POWERSHELL NOT WORKING
@@ -40,12 +40,12 @@ pass: password
 ```
 ##### Using CMD
 ```java
-javac LoginInterface.java
-java -cp .\ojdbc8.jar;.\ LoginInterface.java
+javac Login.java
+java -cp .\ojdbc8.jar;.\ Login.java
 ```
 ##### Using Eclipse
 Right click on ojdbc8.jar > "Build Path" > "Add to build path"
-than just run ```LoginInterface.java``` from eclipse
+than just run ```Login.java``` from eclipse
 
 ## Reference
 [Connect to Oracle DB via JDBC driver](http://www.mkyong.com/jdbc/connect-to-oracle-db-via-jdbc-driver-java/)
