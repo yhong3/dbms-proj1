@@ -285,51 +285,51 @@ public class Professor {
     	String cid = scanner.nextLine();
     	
     	String addCourse_selection = "1"; // selection for Add Course
-	Boolean addCourseReturn = true;
+		Boolean addCourseReturn = true;
 
-	while (addCourse_selection != "4" && addCourseReturn && returnToRoot) {
-		   Menu.addCourseMenu();
-		   addCourse_selection = scanner.nextLine();
+		while (addCourse_selection != "4" && addCourseReturn && returnToRoot) {
+			   Menu.addCourseMenu();
+			   addCourse_selection = scanner.nextLine();
 
-		   switch (addCourse_selection) {
-		   case "0":
-			   addCourseReturn = false;
-			   break;
-		   // Add course basic infos (Insert into the table of COURSE)
-		   case "1":
-			   // Check if the course has already exist
-			if (Course.checkCourseExist(connection, cid)) { Menu.addCourseFailureMessage(); }
+			   switch (addCourse_selection) {
+			   case "0":
+				   addCourseReturn = false;
+				   break;
+			   // Add course basic infos (Insert into the table of COURSE)
+			   case "1":
+				   // Check if the course has already exist
+				if (Course.checkCourseExist(connection, cid)) { Menu.addCourseFailureMessage(); }
 
-			else {
+				else {
 
-				System.out.println("Enter the Basic Infos of this New Course: \n");
-				addCourseBasicInfo(connection, cid);
-				Menu.addCourseSuccessMessage(cid);
-			}
-			   break;
+					System.out.println("Enter the Basic Infos of this New Course: \n");
+					addCourseBasicInfo(connection, cid);
+					Menu.addCourseSuccessMessage(cid);
+				}
+				   break;
 
-		   // Add course instructor and TAs (Insert into the table of COURSE_STAFF)
-		   case "2":
-			   System.out.println("Add an instructor or TA for this New Course: \n");
-			   returnToRoot = addStaffForCourse(connection, cid);
-			   break;
+			   // Add course instructor and TAs (Insert into the table of COURSE_STAFF)
+			   case "2":
+				   System.out.println("Add an instructor or TA for this New Course: \n");
+				   returnToRoot = addStaffForCourse(connection, cid);
+				   break;
 
-		   // Add course topics (Insert into the table of TOPIC)
-		   case "3":
-			   Topics.addTopic(connection, scanner, cid);
-			   break;
+			   // Add course topics (Insert into the table of TOPIC)
+			   case "3":
+				   Topics.addTopic(connection, scanner, cid);
+				   break;
 
-		   case "4":
-			   Menu.returnLoginMessage();
-			   returnToRoot = false;
-			   return returnToRoot;
+			   case "4":
+				   Menu.returnLoginMessage();
+				   returnToRoot = false;
+				   return returnToRoot;
 
-		   default:
-			   Menu.warningMessage();
-			   break;
-		   }//end switch
-	   }//end while 
-	return returnToRoot;
+			   default:
+				   Menu.warningMessage();
+				   break;
+			   }//end switch
+		   }//end while 
+		return returnToRoot;
     }
 	
     static void addCourseBasicInfo(Connection connection, String cid) throws Throwable {
@@ -373,7 +373,7 @@ public class Professor {
     	}
     }
 
-// Add a staff to the new added course 
+	// Add a staff to the new added course 
 	static boolean addStaffForCourse(Connection connection, String cid) throws Throwable {
     	
     	Scanner scanner = new Scanner(System.in);    	
@@ -433,7 +433,7 @@ public class Professor {
     	return returnToRoot;
     }
 	
-// Check if a course has been assigned an instructor
+	// Check if a course has been assigned an instructor
     static boolean checkInstructorAssigned(Connection connection, String cid) throws Throwable
     {
     	Boolean inassign = false; 
@@ -443,10 +443,10 @@ public class Professor {
     	if (rs_inassign.next()) {
     		inassign = true;
     	}
-	return inassign;
+		return inassign;
     }
 
-// Check if instructor exist in the system
+	// Check if instructor exist in the system
     static boolean checkInstructorExist (Connection connection, String uid) throws SQLException
     {
     	Boolean iexist = false; 
@@ -457,7 +457,7 @@ public class Professor {
     		iexist = true;
     	}
     	
-	return iexist;
+		return iexist;
     }
 	
 	
@@ -559,7 +559,7 @@ public class Professor {
     	}
     }
     
-// View/Add Course -- > Enroll/Drop a student:  Drop student from a course
+	// View/Add Course -- > Enroll/Drop a student:  Drop student from a course
     static void dropStudentCourse(Connection connection, String cid) throws Throwable
     {
     	Scanner scanner = new Scanner(System.in);
