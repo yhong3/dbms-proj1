@@ -507,7 +507,7 @@ public class QuestionMenu {
 				System.out.println("There is no topic available currently!");
 				System.out.println("Please add topics to proceed!");
 				Topics t = new Topics();
-				t.addTopic(conn, s);
+				t.addTopic(conn, s, "");
 				return 1;
 			}
 			PreparedStatement stmt;
