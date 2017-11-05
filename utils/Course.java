@@ -444,8 +444,8 @@ public class Course {
     		
     		case "9":
     			// Show all the attempt student has for that exercise
-    			String aid = studentChooseAttempt(connection, uid, cid, eid);
-    			studentViewDetailAttempt(connection, uid, cid, eid, aid);
+    			String atid = studentChooseAttempt(connection, uid, cid, eid); // attempt
+    			studentViewDetailAttempt(connection, uid, cid, eid, atid);
     			break;
     			
     		case "10":
@@ -580,14 +580,14 @@ public class Course {
     }
     
     // View Courses --> Past HWs --> Detailed report for each attempt
-    static void studentViewDetailAttempt(Connection connection, String uid, String cid, String eid, String aid) throws SQLException, ParseException {
+    static void studentViewDetailAttempt(Connection connection, String uid, String cid, String eid, String atid) throws SQLException, ParseException {
     	
     	// Select all question_ids from the SUBMITS table
     	preparedStatement = connection.prepareStatement(SqlQueries.SQL_QUESTIONSOFATTEMPT);
     	preparedStatement.setString(1, uid);
     	preparedStatement.setString(2, cid);
     	preparedStatement.setString(3, eid);
-    	preparedStatement.setString(4, aid);
+    	preparedStatement.setString(4, atid);
     	
     	ResultSet rs_attempt = preparedStatement.executeQuery();
     	
@@ -635,9 +635,9 @@ public class Course {
     			System.out.println("\n***********************************");
     			System.out.println("The answer of Quesiton " + questionList.get(i) + ": ");
     			System.out.println("***********************************");
-    			anscorrIdx = ConcreteQuestionAnswer(connection, uid, questionList.get(i), conAnswerList.get(i), dateList.get(i));
+    			anscorrIdx = ConcreteQuestionAnswer(connection, uid, cid, questionList.get(i), atid, dateList.get(i));
     		}
-		// If question type is 1 (parameter)
+    		// If question type is 1 (parameter)
     		else {
 			System.out.println("\n***********************************");
 			System.out.println("The answer of Quesiton " + questionList.get(i) + ": ");
@@ -656,7 +656,7 @@ public class Course {
     		}//end parameter answers
     		
     		if (anscorrIdx == true) { count_corrans += 1; }
-		else { count_incorrans += 1; }
+    		else { count_incorrans += 1; }
 		}//end answers for each attempt
     	
     	// Total points for that attempt
@@ -795,31 +795,36 @@ public class Course {
 
 	else { 
 		System.out.println();
-		System.out.println("**Whether the selected answer was correct or not**");
+		System.out.println("**4. Whether the selected answer was correct or not**");
 		System.out.println("Answer for this question is: " + "Correct");
 		System.out.println();
-		System.out.println("**Points scored for this question**");
+		System.out.println("**5. Points scored for this question**");
 		System.out.println("Points scored for this question is: " + corr_points);
 	}
 	return corransIdx;
     }
     
     // Display of concrete questions & answers
- 	static boolean ConcreteQuestionAnswer(Connection connection, String uid, String qid, String aid, Date submit_time) throws ParseException, SQLException {
+ 	static boolean ConcreteQuestionAnswer(Connection connection, String uid, String cid, String qid, String atid, Date submit_time) throws ParseException, SQLException {
  		
  		boolean anscorrIdx = true;
  		
  		String query = "SELECT CA.CONCRETE_ANSWER_ID, CA.ANSWER_TEXT, CA.SHORT_EXPLANATION, CA.TYPE, Q.QUESTION_TEXT, Q.HINT, " +
  				"E.EXERCISE_END, E.CORRECT_ANSWER_POINTS, E.INCORRECT_ANSWER_PENALTY " + 
  				"FROM CONCRETE_ANSWER CA, QUESTION Q, SUBMITS S, EXERCISE E " + 
- 				"WHERE S.USER_ID = ? AND CA.QUESTION_ID= ? AND CA.CONCRETE_ANSWER_ID = ? AND CA.QUESTION_ID = Q.QUESTION_ID " +
+ 				"WHERE S.USER_ID = ? AND S.COURSE_ID = ? AND "
+ 				+ "CA.QUESTION_ID= ? AND S.ATTEMPT = ? AND "
+ 				+ "CA.QUESTION_ID = Q.QUESTION_ID " +
  				"AND CA.CONCRETE_ANSWER_ID = S.CONCRETE_ANSWER_ID AND S.EXERCISE_ID = E.EXERCISE_ID ";	
  		
 		PreparedStatement stmt = connection.prepareStatement(query);
 		ResultSet rs;
 		stmt.setString(1, uid);
-		stmt.setString(2, qid);
-		stmt.setString(3, aid);
+		stmt.setString(2, cid);
+		stmt.setString(3, qid);
+		stmt.setString(4, atid);
+		
+		
 		rs = stmt.executeQuery();
 		int count_rs = 0;
 		
