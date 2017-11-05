@@ -76,7 +76,7 @@ public class PastHomework {
 	private static int[] HW_submission(Connection conn, String cid, String uid, String eid) {
 		PreparedStatement stmt;
 		num_of_student_attempts = NoOfAttempt(conn, cid, uid, eid);
-		System.out.println("Number of attempts: " + num_of_student_attempts);
+		//System.out.println("Number of attempts: " + num_of_student_attempts);
 		int[] hw_score_attempts = new int[num_of_student_attempts];
 		if(num_of_student_attempts > 0) {
 			for(int i  = 0; i < num_of_student_attempts; i++) {
@@ -115,9 +115,10 @@ public class PastHomework {
 				}
 			}
 		}
+		/**
 		else {
 			System.out.println("The student has made no attempts of this HW!");
-		}
+		}*/
 		return hw_score_attempts;
 	}
 	
@@ -165,7 +166,7 @@ public class PastHomework {
 				    	score += student_score_attempts[i];
 				    }
 				}
-				System.out.println("Score: " + score);
+				//System.out.println("Score: " + score);
 				score = score / student_score_attempts.length;
 				break;
 			default:
