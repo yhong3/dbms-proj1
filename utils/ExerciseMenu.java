@@ -324,7 +324,7 @@ public class ExerciseMenu {
 						int current_no=qs.getInt(1);
 						if(current_no<max_no)
 						{
-							String quest_already="select * from exercise_question where question_id=?"; 		// check if question is already in the exercise
+							String quest_already="select * from exercise_question where question_id=? and exercise_id=?"; 		// check if question is already in the exercise
 							String quest_exists="select * from question where question_id=?";					// check if question exists
 							stmt = conn.prepareStatement(quest_exists);
 							stmt.setInt(1, choice);	
@@ -335,8 +335,9 @@ public class ExerciseMenu {
 							} 
 							stmt = conn.prepareStatement(quest_already);
 							stmt.setInt(1, choice);	
+							stmt.setInt(2, exerciseId);
 							check_question=stmt.executeQuery();
-							if(check_question.next()) {
+							if(check_question.isBeforeFirst()) {
 								System.out.println("question already exists in the exercise!! aborting..start over again");
 								return;
 							}

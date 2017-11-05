@@ -713,6 +713,27 @@ public class Course {
 	return count;
     }
     
+	static ArrayList<String> checkSubmitExistence(Connection connection, String uid, String cid, ArrayList <String> course_exerciseList) throws SQLException, ParseException
+    {
+    	Scanner scanner = new Scanner(System.in);
+    	
+    	// Display all available exercise_id for that user
+    	preparedStatement = connection.prepareStatement(SqlQueries.SQL_ALLPASTEXEERCISE);
+    	preparedStatement.setString(1, uid);
+    	preparedStatement.setString(2, cid);
+    	
+    	ResultSet rs_exercise = preparedStatement.executeQuery();
+    	ArrayList<String> zeroExerciseList = new ArrayList<String>();
+    	
+    	while (rs_exercise.next()) {
+    		String temp_eid = rs_exercise.getString("EXERCISE_ID");
+    		if(course_exerciseList.contains(temp_eid)) {
+    			zeroExerciseList.add(temp_eid);
+    		}	
+        }
+    	return zeroExerciseList;
+    }	
+	
     // Detailed report for each attempt display
     static boolean DetailedReportDisplay(String answer_type, String short_explanation, String answer_hint, Date exercise_due,
     		String question_type, String corr_points, String incorr_points) {
