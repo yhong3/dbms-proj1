@@ -371,15 +371,14 @@ public class Course {
 	    		break;
     			
     		case "2":
-    			ArrayList<String> past_exes = pastExes(connection, cid, uid);
-    			//ArrayList<String> zero_submissions = checkSubmitExistence(connection, uid, cid, past_exes);
-    			if(past_exes.isEmpty()) {
-    				System.out.println("There is no past homework to show yet!");
-    			}
-    			else {
-    				String eid = studentChoosePastHM(connection, uid, cid, past_exes);
-        			returnToRoot = studentViewPastHM(connection, uid, cid, eid);
-    			}
+    			ArrayList<String> past_exes = pastSubmissions(connection, uid, cid);
+			if(past_exes.isEmpty()) {
+				System.out.println("There is no past homework to show yet!");
+			}
+			else {
+				String eid = studentChoosePastHM(connection, uid, cid, past_exes);
+				returnToRoot = studentViewPastHM(connection, uid, cid, eid);
+			}
     			
     		case "3":
 	        	Menu.returnLoginMessage();
@@ -713,26 +712,47 @@ public class Course {
 	return count;
     }
     
-	static ArrayList<String> checkSubmitExistence(Connection connection, String uid, String cid, ArrayList <String> course_exerciseList) throws SQLException, ParseException
-    {
-    	Scanner scanner = new Scanner(System.in);
-    	
-    	// Display all available exercise_id for that user
-    	preparedStatement = connection.prepareStatement(SqlQueries.SQL_ALLPASTEXEERCISE);
-    	preparedStatement.setString(1, uid);
-    	preparedStatement.setString(2, cid);
-    	
-    	ResultSet rs_exercise = preparedStatement.executeQuery();
-    	ArrayList<String> zeroExerciseList = new ArrayList<String>();
-    	
-    	while (rs_exercise.next()) {
-    		String temp_eid = rs_exercise.getString("EXERCISE_ID");
-    		if(course_exerciseList.contains(temp_eid)) {
-    			zeroExerciseList.add(temp_eid);
-    		}	
-        }
-    	return zeroExerciseList;
-    }	
+	static ArrayList<String> pastSubmissions(Connection connection, String uid, String cid) throws SQLException, ParseException
+	{
+		ArrayList<String> pastSubmission = new ArrayList<String>();
+		//while(true) {
+		try {
+			preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETEXERCISETIME);
+			preparedStatement.setString(1, cid);
+			ResultSet rs = preparedStatement.executeQuery();
+			if (!rs.isBeforeFirst() ) {    
+				System.out.println("No exercise exist for this course yet"); 
+				return null;
+			} 
+			while(rs.next()) {
+				String e_id = rs.getString("exercise_id");
+				java.util.Date e_date = rs.getDate("exercise_end");
+				ZoneId z = ZoneId.of( "America/New_York" ); // use the new_york time zone to determine current date
+				LocalDate currentZoneDate = LocalDate.now(z);
+				java.util.Date currentDate = java.sql.Date.valueOf(currentZoneDate);
+
+				// If current data after the exercise due, show the explanation
+
+				preparedStatement = connection.prepareStatement(SqlQueries.SQL_GETSTUDENTAPERCOURSE);
+				preparedStatement.setString(1, cid);
+				preparedStatement.setString(2, e_id);
+				preparedStatement.setString(3, uid);
+				ResultSet rs_exercise = preparedStatement.executeQuery();
+
+				while (rs_exercise.next()) {
+					int ex_in_submit = rs_exercise.getInt(1);
+					if(ex_in_submit > 0 || currentDate.compareTo(e_date) > 0) {
+						pastSubmission.add(e_id); 
+					}
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//}
+		return pastSubmission;
+	}	
 	
     // Detailed report for each attempt display
     static boolean DetailedReportDisplay(String answer_type, String short_explanation, String answer_hint, Date exercise_due,
