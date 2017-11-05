@@ -1,12 +1,13 @@
 # DBMS Project 1
 
-## Coding Notes
-when sql is not giving back the desired result, check these
-1. press "sql commit" in the SQL developer
-2. the column index and input value in setInt() and setString(), etc.
-3. check if you are using 2 prepare statement at the same time (maybe using a query to determine value of another query)
-4. check if the query first, you need ';' at sql developer, but not in the preparedstatement
-5. sometimes add more space when concat different lines of queries
+### Team member
+CSC 540 Fall 2017
+Team Q
+
+Yu-Lun Hong (yhong3)
+Ashwin Risbood (arisboo)
+Huy Tu (hqtu)
+Xi Yang (yxi2)
 
 ## Set up oracle
 Tested on Win 10 with **CMD**, POWERSHELL NOT WORKING
@@ -23,20 +24,20 @@ GRANT EXECUTE ANY PROCEDURE TO admin;
 ```
 (run `alter session set "_ORACLE_SCRIPT"=true;` if sqlplus complaining `oracle invalid common user or role name`)
 
-Setting for oracle database
+### Run the program
+#### Populate sample database
+1. in ```sql/DatabaseParameter.java```, change it to your database credentials, add it to gitignore once you are done.
+2. (optional) ```Run sql_files/DropAllTable.sql``` using sql developer if you want to drop all tables 
+3. Run ```sql_files/createSchema.sql``` to create and insert tables, triggers, etc.
+4. Run ```sql_files/insertSamples.sql``` to insert sample data
+5. run Java
+
+Current setting for oracle database
 ```
 database: orcl
 name: admin
 pass: password
 ```
-
-### Run the program
-#### Populate sample database
-1. in sql/DatabaseParameter.java, change it to your database credentials, add it to gitignore once you are done.
-2. (optional) Run sql_files/DropAllTable.sql using sql developer if you want to drop all tables 
-3. Run sql_files/createSamples.sql to create and insert tables
-4. run Java
-
 ##### Using CMD
 ```java
 javac LoginInterface.java
@@ -51,4 +52,15 @@ than just run ```LoginInterface.java``` from eclipse
 [Drop All Tables](http://www.jochenhebbrecht.be/site/2010-05-10/database/drop-all-tables-in-oracle-db-scheme)
 [csv2sql](http://csv2mysql.patrotsky.com/index.php)
 [Auto-increment ID in oracle](http://earlruby.org/2009/01/creating-auto-increment-columns-in-oracle/)
+
+## Coding Notes
+when sql is not giving back the desired result, check these
+1. press "sql commit" in the SQL developer
+2. the column index and input value in setInt() and setString(), etc.
+3. check if you are using 2 prepare statement at the same time (maybe using a query to determine value of another query)
+4. check if the query first, you need ';' at sql developer, but not in the preparedstatement
+5. sometimes add more space when concat different lines of queries
+
+show trigger errors
+show errors trigger PARAM_QUESTION_ANSWER_COUNT
 
