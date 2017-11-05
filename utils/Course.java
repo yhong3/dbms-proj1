@@ -354,8 +354,15 @@ public class Course {
 	    		break;
     			
     		case "2":
-    			String eid = studentChoosePastHM(connection, uid, cid);
-    			returnToRoot = studentViewPastHM(connection, uid, cid, eid);
+    			ArrayList<String> past_exes = pastExes(connection, cid, uid);
+    			//ArrayList<String> zero_submissions = checkSubmitExistence(connection, uid, cid, past_exes);
+    			if(past_exes.isEmpty()) {
+    				System.out.println("There is no past homework to show yet!");
+    			}
+    			else {
+    				String eid = studentChoosePastHM(connection, uid, cid, past_exes);
+        			returnToRoot = studentViewPastHM(connection, uid, cid, eid);
+    			}
     			
     		case "3":
 	        	Menu.returnLoginMessage();
@@ -371,23 +378,9 @@ public class Course {
     	return returnToRoot;
     }
     
-    // TODO: Students view details of a past HW
-    static String studentChoosePastHM(Connection connection, String uid, String cid) throws SQLException, ParseException
-    {	    	
+    static String studentChoosePastHM(Connection connection, String uid, String cid, ArrayList <String> exerciseList) throws SQLException, ParseException
+    {
     	Scanner scanner = new Scanner(System.in);
-    	
-    	// Display all available exercise_id for that user
-    	preparedStatement = connection.prepareStatement(SqlQueries.SQL_ALLPASTEXEERCISE);
-    	preparedStatement.setString(1, uid);
-    	preparedStatement.setString(2, cid);
-    	ResultSet rs_exercise = preparedStatement.executeQuery();
-    	List<String> exerciseList = new ArrayList<String>();
-    	
-    	while (rs_exercise.next()) {
-    		String eid = rs_exercise.getString("EXERCISE_ID");
-    		exerciseList.add(eid);
-        }
-    	
     	Menu.studentShowPastExeID(exerciseList);
     	Menu.studentSelectExeMessage();
     	
@@ -402,7 +395,7 @@ public class Course {
     		Menu.returnToMenuMessage();
     		return null;
     	}
-    }	
+    }
     	
     
     static Boolean studentViewPastHM(Connection connection, String uid, String cid, String eid) throws SQLException, ParseException
@@ -986,5 +979,28 @@ public class Course {
     	Menu.enrollTASuccessMessage(sid, cid);
 	}
 
-
+	static ArrayList<String> pastExes(Connection conn, String cid, String sid){
+		ArrayList<String> past_exes = new ArrayList<String>();
+		try {
+			preparedStatement = conn.prepareStatement(SqlQueries.SQL_GETEXERCISETIME);
+			preparedStatement.setString(1, cid);
+	    	ResultSet rs = preparedStatement.executeQuery();
+	    	while(rs.next()) {
+	    		String e_id = rs.getString("exercise_id");
+	    		java.util.Date e_date = rs.getDate("exercise_end");
+	    		ZoneId z = ZoneId.of( "America/New_York" ); // use the new_york time zone to determine current date
+	    		LocalDate currentZoneDate = LocalDate.now(z);
+	    		java.util.Date currentDate = java.sql.Date.valueOf(currentZoneDate);
+	    		
+	    		// If current data after the exercise due, show the explanation
+	    		if (currentDate.compareTo(e_date) > 0) {
+	    			past_exes.add(e_id);
+	    		}
+	    	}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return past_exes;
+	}
 }
