@@ -13,5 +13,21 @@ BEGIN
     END LOOP;
 
 END;
+/
+--------------------------------------------------------
+--  DROP ALL TRIGGERS
+--------------------------------------------------------
+BEGIN  
+  FOR i in (select trigger_name,owner 
+              from dba_triggers 
+             where trigger_name like '%_BI%' and owner = 'admin' ) LOOP  
+    EXECUTE IMMEDIATE 'DROP TRIGGER '||i.owner||'.'||i.trigger_name;  
+  END LOOP;  
+END; 
+/
 
-
+--------------------------------------------------------
+--  SHOW ALL TRIGGERS
+--------------------------------------------------------
+SELECT TRIGGER_NAME FROM USER_TRIGGERS ;
+/
