@@ -26,21 +26,27 @@ GRANT EXECUTE ANY PROCEDURE TO admin;
 ```
 (run `alter session set "_ORACLE_SCRIPT"=true;` if sqlplus complaining `oracle invalid common user or role name`)
 
-
 ### Populate sample database
 1. in ```sql/DatabaseParameter.java```, change it to your database credentials, add it to gitignore once you are done.
-2. (optional) ```Run sql_files/DropAllTable.sql``` using sql developer if you want to drop all tables 
+2. (optional) ```Run sql_files/DropAllTable.sql``` using sql developer if you want to drop all tables and triggers 
 3. Run ```sql_files/createSchema.sql``` to create and insert tables, triggers, etc.
 4. Run ```sql_files/insertSamples.sql``` to insert sample data
 5. run Java program
 
-Current setting for oracle database
+Default local setting for oracle database
 ```
 database: orcl
 name: admin
 pass: password
+
+In sql/DatabaseParameter.java
+DB_DRIVER = "oracle.jdbc.driver.OracleDriver";
+DB_CONNECTION = "jdbc:oracle:thin:@localhost:1521:orcl";
+DB_USER = "admin";
+DB_PASSWORD = "password";
 ```
 #### Run from executable
+
 From any kind of command line, run
 ```
 java -jar Login.jar
@@ -71,5 +77,6 @@ when sql is not giving back the desired result, check these
 5. sometimes add more space when concat different lines of queries
 
 show trigger errors
+```
 show errors trigger PARAM_QUESTION_ANSWER_COUNT
-
+```
