@@ -304,7 +304,6 @@ public class Professor {
 
 					System.out.println("Enter the Basic Infos of this New Course: \n");
 					addCourseBasicInfo(connection, cid);
-					Menu.addCourseSuccessMessage(cid);
 				}
 				   break;
 
@@ -332,7 +331,7 @@ public class Professor {
 		return returnToRoot;
     }
 	
-    static void addCourseBasicInfo(Connection connection, String cid) throws Throwable {
+   static void addCourseBasicInfo(Connection connection, String cid) throws Throwable {
     	
     	Scanner scanner = new Scanner(System.in);
     	
@@ -347,29 +346,41 @@ public class Professor {
 	    	System.out.println("Add a course_start: \n");
 	    	String cstart = scanner.nextLine();
 	    	
-	    	System.out.println("Add a course_end: \n");
+	    	System.out.println("Add a course_end (yyyy/mm/dd): \n");
 	    	String cend = scanner.nextLine();
 	    	
-	    	System.out.println("Add a course_level: \n");
+	    	System.out.println("Add a course_level (yyyy/mm/dd): \n");
 	    	String clevel = scanner.nextLine();
 	    	
-	    	SimpleDateFormat format= new SimpleDateFormat("yyyy/mm/dd"); //  hh:mi:ss AM
-	        java.util.Date dstart= format.parse(cstart);
-	        java.util.Date dend= format.parse(cend);
-	    	
-	        // Converting java.util.Date value to java.sql.Date class obj
-	        long constart = dstart.getTime();
-	        java.sql.Date qstart= new java.sql.Date(constart);
-	        long conend = dend.getTime();
-	        java.sql.Date qend= new java.sql.Date(conend);
-    	
-	    	PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.SQL_INSERTCOURSE);
+	    	java.sql.Date qstart = null;
+	    	java.sql.Date qend = null;
+    		
+    		try {
+		    	
+		    	SimpleDateFormat format= new SimpleDateFormat("yyyy/mm/dd"); //  hh:mi:ss AM
+		        java.util.Date dstart= format.parse(cstart);
+		        java.util.Date dend= format.parse(cend);
+		    	
+		        // Converting java.util.Date value to java.sql.Date class obj
+		        long constart = dstart.getTime();
+		        qstart= new java.sql.Date(constart);
+		        long conend = dend.getTime();
+		        qend= new java.sql.Date(conend);
+		        
+    		}catch (ParseException e) {
+    			System.out.println("\n**The format of date is incorrect.**");
+    			return;
+	        }
+    		
+    		PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.SQL_INSERTCOURSE);
 	    	preparedStatement.setString(1, cid);
 	    	preparedStatement.setString(2, cname);
 	    	preparedStatement.setDate(3, qstart);
 	    	preparedStatement.setDate(4, qend);
 	    	preparedStatement.setString(5, clevel);
 	    	preparedStatement.execute();
+	    	
+		Menu.addCourseSuccessMessage(cid);
     	}
     }
 
