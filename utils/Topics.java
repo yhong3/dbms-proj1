@@ -28,16 +28,17 @@ public class Topics {
 			System.out.println("Enter your choice and press Enter to continue. ");
 
 			choice = s.nextInt();
-
+			s.nextLine();
 			switch (choice) {
 			case SEARCH:
 				//TODO view the question
 				System.out.println("What is the topic id of the topic that you are looking for?");
 				t_id = s.nextInt();
+				s.nextLine();
 				check = queryTopic(conn, t_id);
 				break;
 			case ADDT:
-				check = addTopic(conn, s, "");
+				check = addTopic(conn, s, "CSC440");
 				break;
 			case PREVIOUS:
 				check = 0;
@@ -92,7 +93,7 @@ public class Topics {
 
 	public static int addTopic(Connection conn, Scanner s, String cid) {
 		int check_add_topic = 0;
-		topic_id = findmaxid(conn, "topic_id", "TOPIC");
+		topic_id = findmaxid(conn, "topic_id", "TOPIC") + 1;
 		
 		System.out.println("\nThe name of the topic is: ");
 		topic_name = s.nextLine();
