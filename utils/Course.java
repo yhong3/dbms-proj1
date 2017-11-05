@@ -73,7 +73,7 @@ public class Course {
 	        
 	        // 6. TODO: View Report
 	        case "6":
-	        	// TODO 
+	        	Report.viewreport(connection, cid);
 	        	break;
 	        	
 	        case "7":
@@ -931,7 +931,7 @@ public class Course {
 	    	
 	    	// TODO: 3. View/Add Exercise
 	        case "3":
-	        	// TODO 
+	        	ExerciseMenu.ViewExerciseMenu(connection,cid); 
 	        	break;
 	        	
 	        // 4. View TA
@@ -946,7 +946,7 @@ public class Course {
 	        
 	        // 6. TODO: View Report
 	        case "6":
-	        	// TODO 
+	        	Report.viewreport(connection, cid);  
 	        	break;
 	        	
 	        case "7":
