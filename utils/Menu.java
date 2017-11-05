@@ -1,7 +1,6 @@
 package utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -54,6 +53,33 @@ public class Menu {
     		"***********************************\n");
     }
 	
+	public static void addCourseMenu() {
+		System.out.print(
+    		"***********************************\n" +
+    		"Add an Instructor/TAs:\n" +
+    		"Please Make a Selection (1-3):\n" +	
+            "***********************************\n" +
+            "0. Return to Previous Menu \n" +
+            "1. Add Bisic Info for the New Course\n" +
+            "2. Add Instructor/TA for the New Course\n" +
+            "3. Add Topics for the New Course\n" +
+            "4. Logout\n" +
+    		"***********************************\n");
+	}
+	
+	public static void addInstructorTAMenu() {
+		System.out.print(
+    		"***********************************\n" +
+    		"Add an Instructor/TAs:\n" +
+    		"Please Make a Selection (1-3):\n" +	
+            "***********************************\n" +
+            "0. Return to Previous Menu \n" +
+            "1. Add an instructor\n" +
+            "2. Add TAs\n" +
+            "3. Logout\n" +
+    		"***********************************\n");
+	}
+
 	public static void taMainMenu() {
 		System.out.print(
     		"***********************************\n" +
@@ -284,25 +310,6 @@ public class Menu {
 	
 	public static void studentSelectAttemptMessage() { System.out.println( "\n**Pleaes select an attempt from the ATTEMPT LIST shown above to view the details.**"); }
 	
-	
-	
-	//
-	public static void studentViewPastHWReportMenu() {
-		System.out.println(
-			"******************************************\n" +
-			"Student View of Past HW Reports: \n" +
-			"Please Make a Selection (1-3):\n" +
-			"******************************************\n" +
-			"0. Return to Previous Menu \n" +
-			"0. Return to Previous Menu \n" +
-			"0. Return to Previous Menu \n" +
-			"0. Return to Previous Menu \n" +
-			"0. Return to Previous Menu \n" +
-			"0. Return to Previous Menu \n" +
-			"** Past HW Infos:** \n");
-			
-    }
-	
 	public static void studentProfileMessage(String sid, String sname, int syear, String stype) {
 		System.out.println(
 			"*********Personal Profile********** \n" +
@@ -329,9 +336,73 @@ public class Menu {
 			"***********************************\n");
     }
 	
+	/*****************************
+	 * Student HW related
+	 *****************************/
+	
+	public static void studentCurrentHWHeader() { 
+		System.out.println( "\n******Current HWs*******");
+	}
+	
+	public static void printCurrentHW(int exid, String ename, int attempt_left) {
+ 		// format 
+ 		//1. exercise name (Attempt left: 2)
+ 		if (attempt_left == -1) {
+ 			System.out.println(exid + ". " + ename + " (Attempt left: Unlimited)");
+ 		} else {
+ 			System.out.println(exid + ". " + ename + " (Attempt left: " + attempt_left + ")");
+ 		}
+ 		
+ 	}
+ 	public static void studentCurrentHWFooter() { 
+ 		System.out.println( "Please choose the homework id you want to attempt: ");
+ 		
+ 	}
+ 	public static void printStudentNoHWMessage() { System.out.println( "\n**Hurray! No open homeworks now.**"); }
+ 	
+ 	public static void printQuestion(int num, String text, ArrayList<String> ans) {
+ 		System.out.println( 
+ 				"\n******Question " + num + " *******\n"
+ 				+ text
+ 				+ "\n********************************"
+ 				+ "\nOptions (1-4): "
+ 				+ "\n 1. " + ans.get(0)
+ 				+ "\n 2. " + ans.get(1)
+ 				+ "\n 3. " + ans.get(2)
+ 				+ "\n 4. " + ans.get(3)
+ 				+ "\n");
+ 	}
+ 	
+ 	public static void askAnswerMessage() {
+ 		System.out.println(
+ 			"\nPlease enter your answer (1-4): ");
+     }
+ 	
+ 	public static void invalidAnswerMessage() {
+ 		System.out.println(
+ 			"\nInvalid option, please enter your answer (1-4): ");
+     }
+	
+ 	public static void completeHWMessage() {
+ 		System.out.println(
+ 			"\n*** You have complete the attempt of this homework***");
+     }
+ 	public static void submitAnswerSuccessMessage() { System.out.println( "**Answer Submitted**"); }
+ 	public static void attemptHWSuccessMessage() { System.out.println( "**You have finished this attempt successfully.**"); }
+ 	
+ 	// TODO remove
+ 	/*
+     public static void main(String args[]) {
+         String text = "<?>b<?>c<?>d<?>e<?>";
+         String[] splittedText = text.split(Pattern.quote("<?>"));
+ 
+         System.out.println(Arrays.toString(splittedText));
+     }
+     */
+ 	
+ 	
 	public static void stdCourseDisplayMessage(String cid, String cname, String cstart, String cend) {
 		System.out.println("\n**********Courses Enrolled:********"); 
-		courseInfoMessage(cid, cname, cstart, cend); 
 		}
 	
 	public static void staffCourseDisplayMessage(String cid, String cname, String cstart, String cend) { 
@@ -433,7 +504,12 @@ public class Menu {
 	
 	public static void dropStuEnrollFailureMessage() {
 		System.out.println(
-			"\n**Student has not been enrolled in this course.**");
+			"\n**Student has not been enrolled as a student in this course.**");
+    }
+	
+	public static void enrollStuRedoFailureMessage() {
+		System.out.println(
+			"\n**Student has already been enrolled as a TA in this course.**");
     }
 	
 	public static void enrollStuLevelFailureMessage() {
@@ -473,66 +549,6 @@ public class Menu {
 		System.out.println("Student: " + sid + " have been dropped from the course.");
     }
 	
-	/*****************************
-	 * Student HW related
-	 *****************************/
-	public static void studentCurrentHWHeader() { 
-		System.out.println( "\n******Current HWs*******");
-	}
 	
-	public static void printCurrentHW(int exid, String ename, int attempt_left) {
-		// format 
-		//1. exercise name (Attempt left: 2)
-		if (attempt_left == -1) {
-			System.out.println(exid + ". " + ename + " (Attempt left: Unlimited)");
-		} else {
-			System.out.println(exid + ". " + ename + " (Attempt left: " + attempt_left + ")");
-		}
-		
-	}
-	public static void studentCurrentHWFooter() { 
-		System.out.println( "Please choose the homework id you want to attempt: ");
-		
-	}
-	public static void printStudentNoHWMessage() { System.out.println( "\n**Hurray! No open homeworks now.**"); }
-	
-	public static void printQuestion(int num, String text, ArrayList<String> ans) {
-		System.out.println( 
-				"\n******Question " + num + " *******\n"
-				+ text
-				+ "\n********************************"
-				+ "\nOptions (1-4): "
-				+ "\n 1. " + ans.get(0)
-				+ "\n 2. " + ans.get(1)
-				+ "\n 3. " + ans.get(2)
-				+ "\n 4. " + ans.get(3)
-				+ "\n");
-	}
-	
-	public static void askAnswerMessage() {
-		System.out.println(
-			"\nPlease enter your answer (1-4): ");
-    }
-	
-	public static void invalidAnswerMessage() {
-		System.out.println(
-			"\nInvalid option, please enter your answer (1-4): ");
-    }
-	
-	public static void completeHWMessage() {
-		System.out.println(
-			"\n*** You have complete the attempt of this homework***");
-    }
-	public static void submitAnswerSuccessMessage() { System.out.println( "**Answer Submitted**"); }
-	public static void attemptHWSuccessMessage() { System.out.println( "**You have finished this attempt successfully.**"); }
 
-	// TODO remove
-	/*
-    public static void main(String args[]) {
-        String text = "<?>b<?>c<?>d<?>e<?>";
-        String[] splittedText = text.split(Pattern.quote("<?>"));
-
-        System.out.println(Arrays.toString(splittedText));
-    }
-    */
 }

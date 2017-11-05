@@ -86,9 +86,9 @@ public class QuestionMenu {
 			rs = stmt.executeQuery();
 			//System.out.println("rsfound");
 			if (!rs.isBeforeFirst() ) {    
-			    System.out.println("This Question ID doesn't exist"); 
-			    System.out.println();
-			    return 0;
+				System.out.println("This Question ID doesn't exist"); 
+				System.out.println();
+				return 0;
 			}
 			else {
 				while (rs.next()) {
@@ -151,8 +151,8 @@ public class QuestionMenu {
 		int check = 1;
 		while(check == 1) {
 			System.out.println("What type of question do you want to add?");
+			System.out.println("0. Concrete");
 			System.out.println("1. Parameterized");
-			System.out.println("2. Concrete");
 			type = s.nextInt();
 			s.nextLine();
 			System.out.println();
@@ -179,17 +179,17 @@ public class QuestionMenu {
 			System.out.println("The detailed explanation of the question is: ");
 			detailed_explanation = s.nextLine();
 			System.out.println();
-			System.out.println("The difficulty level of the question is (1-6): ");
+			System.out.println("The difficulty level of the question is (1-5): ");
 			difficulty_level = s.nextInt();
 			s.nextLine();
 			System.out.println();
-			if (difficulty_level > 6 || difficulty_level < 1 || type > 1 || type < 0) {
+			if (notEmptyStr(hint) || notEmptyStr(detailed_explanation) || difficulty_level < 6 || difficulty_level > 0 || (type == 1 || type == 0)) {
+				check = 0;
+			}
+			else {
 				System.out.println("One of the question's variables is invalid. Please re-add the question!");
 				System.out.println();
 				check = 1;
-			}
-			else {
-				check = 0;
 			}
 		}
 		PreparedStatement preparedStatement;
@@ -230,32 +230,32 @@ public class QuestionMenu {
 		int loopc = 1;
 		AddAnswers aa;
 
-		while (loopc == 1) {
-			switch (type) {
-			case 1:
-				//TODO view the question
-				/**
+		//while (loopc == 1) {
+		switch (type) {
+		case 1:
+			//TODO view the question
+			/**
 				System.out.println("How many parameters are you looking to have in your questions?");
 				System.out.println("(The maximum number is 5)");
 				n_o_p = s.nextInt();
 				s.nextLine();
 				if(n_o_p <= 5 & n_o_p > 0) {
-				 */
-				aa = new AddAnswers(conn, num_of_p);
-				check = aa.parameterizeQ(conn, s, num_of_p);
-				loopc = questionflow(check, loopc, s);
-				break;
-			case 0:
-				aa = new AddAnswers(conn, num_of_p);
-				check = aa.concreteQ(conn, s);
-				loopc = questionflow(check, loopc, s);
-				break;
-			default:
-				System.out.println("Invalid Question Type!");
-				s.close();
-				break;
-			} // end switch
-		} // end while
+			 */
+			aa = new AddAnswers(conn, num_of_p);
+			check = aa.parameterizeQ(conn, s, num_of_p);
+			//loopc = questionflow(check, loopc, s);
+			break;
+		case 0:
+			aa = new AddAnswers(conn, num_of_p);
+			check = aa.concreteQ(conn, s);
+			//loopc = questionflow(check, loopc, s);
+			break;
+		default:
+			System.out.println("Invalid Question Type!");
+			s.close();
+			break;
+		} // end switch
+		//} // end while
 		return check;
 	}
 
@@ -334,7 +334,6 @@ public class QuestionMenu {
 				question_text = s.nextLine();
 				System.out.println();
 				check = 1;
-
 			}
 		}
 	}
@@ -507,7 +506,7 @@ public class QuestionMenu {
 				System.out.println("There is no topic available currently!");
 				System.out.println("Please add topics to proceed!");
 				Topics t = new Topics();
-				t.addTopic(conn, s);
+				t.addTopic(conn, s, "");
 				return 1;
 			}
 			PreparedStatement stmt;
@@ -546,5 +545,9 @@ public class QuestionMenu {
 			}
 		}
 		return 1;
+	}
+	
+	public static boolean notEmptyStr(String str) {
+		return str != null && !str.isEmpty();
 	}
 }

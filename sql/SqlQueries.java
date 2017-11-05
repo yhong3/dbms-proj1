@@ -187,6 +187,25 @@ public class SqlQueries {
     public static final String SQL_CHECKPOINTS = "SELECT E.CORRECT_ANSWER_POINTS, E.INCORRECT_ANSWER_PENALTY FROM EXERCISE E "
     		+ "WHERE EXERCISE_ID = ? ";
 	
+	
+	// Check the User_id of instructor in the COURSE_STAFF table for a certain course
+    public static final String SQL_CHECKCOURSEINS = "SELECT P.USER_ID "
+    		+ "FROM PROFESSOR P, COURSE_STAFF CS "
+    		+ "WHERE CS.COURSE_ID = ? AND CS.USER_ID = P.USER_ID ";
+    
+    // Insert to a COURSE_STAFF table    
+    public static final String SQL_ASSIGNINSTRUCTOR = "INSERT INTO COURSE_STAFF(COURSE_ID, USER_ID, ROLE) "
+    		+ "VALUES (?,?,1)";
+    
+    // Check student enrollment of a course
+    public static final String SQL_CHECKSTUENROLLCOURSE = "SELECT CS.USER_ID FROM COURSE_STUDENT CS WHERE CS.COURSE_ID = ? ";
+    
+    // Check TA enrollment of a course
+    public static final String SQL_CHECKTAENROLLCOURSE = "SELECT * FROM COURSE_STAFF CS WHERE CS.COURSE_ID = ? AND CS.USER_ID = ? ";
+	
+	
+
+	
 	//TQA
     public static final String SQL_FINDID = "SELECT MAX(?1) FROM ";
 
@@ -219,5 +238,9 @@ public class SqlQueries {
 	public static final String SQL_GETPANSWERTYPE = "SELECT TYPE FROM PARAMETER_ANSWER WHERE (QUESTION_ID=? AND PARAMETER_ID=? AND PARAMETER_ANSWER_ID=?)";
 
 	public static final String SQL_GETCANSWERTYPE = "SELECT TYPE FROM CONCRETE_ANSWER WHERE (QUESTION_ID=? AND CONCRETE_ANSWER_ID=?)";
+	
+	public static final String SQL_GETEXERCISETIME = "SELECT EXERCISE_ID, EXERCISE_END FROM EXERCISE WHERE (COURSE_ID=?)";
+	
+	public static final String SQL_GETEXERCISEFSUBMITS = "SELECT COUNT(*) FROM SUBMITS S WHERE (S.USER_ID = ? AND S.COURSE_ID = ? AND S.EXERCISE_ID = ?)"; 
 
 }

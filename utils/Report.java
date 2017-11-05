@@ -201,7 +201,7 @@ public static void viewreport(Connection conn, String cid)
 				else {
 					e_mode = "Adaptive";
 				}
-				System.out.println("Student's score according to the method: " + student_score+ " /"+total_pts_hw);
+				System.out.println("Student's score: " + student_score+ " /"+total_pts_hw);
 				clearSetting();
 			}
 		} catch (SQLException e) {
