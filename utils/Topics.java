@@ -17,6 +17,7 @@ public class Topics {
 	public static void displayMenu(Connection conn) {
 		int choice = 0;
 		int t_id = -1; 
+		String c_id = "";
 		int check = 1; 
 		Scanner s = new Scanner(System.in);
 
@@ -38,7 +39,9 @@ public class Topics {
 				check = queryTopic(conn, t_id);
 				break;
 			case ADDT:
-				check = addTopic(conn, s, "CSC440");
+				System.out.println("What is the course id of the topic that you are looking for?");
+				c_id = s.nextLine();
+				check = addTopic(conn, s, c_id);
 				break;
 			case PREVIOUS:
 				check = 0;
@@ -98,6 +101,8 @@ public class Topics {
 		System.out.println("\nThe name of the topic is: ");
 		topic_name = s.nextLine();
 	
+		System.out.println("\nCourse ID: " + cid);
+		
 		PreparedStatement preparedStatement;
 		try {
 			preparedStatement = conn.prepareStatement(SqlQueries.SQL_INSERTTOPIC);
