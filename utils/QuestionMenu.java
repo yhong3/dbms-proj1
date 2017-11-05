@@ -183,13 +183,13 @@ public class QuestionMenu {
 			difficulty_level = s.nextInt();
 			s.nextLine();
 			System.out.println();
-			if (difficulty_level > 6 || difficulty_level < 1 || type > 1 || type < 0) {
+			if (notEmptyStr(hint) || notEmptyStr(detailed_explanation) || difficulty_level < 6 || difficulty_level > 0 || (type == 1 || type == 0)) {
+				check = 0;
+			}
+			else {
 				System.out.println("One of the question's variables is invalid. Please re-add the question!");
 				System.out.println();
 				check = 1;
-			}
-			else {
-				check = 0;
 			}
 		}
 		PreparedStatement preparedStatement;
@@ -545,5 +545,9 @@ public class QuestionMenu {
 			}
 		}
 		return 1;
+	}
+	
+	public static boolean notEmptyStr(String str) {
+		return str != null && !str.isEmpty();
 	}
 }
