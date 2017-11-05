@@ -369,7 +369,6 @@ public class Professor {
 		        
     		}catch (ParseException e) {
     			System.out.println("\n**The format of date is incorrect.**");
-    			Menu.returnToMenuMessage();
     			return;
 	        }
     		
