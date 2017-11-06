@@ -565,6 +565,12 @@ public class Course {
     		String temp_aid = rs_exercise.getString("ATTEMPT");
     		attemptList.add(temp_aid);
         }
+	    
+	if (attemptList.isEmpty()) { 
+		System.out.println("\n**No attempt has been submitted.**");
+		String tsignal = "tEmpty";
+		return tsignal;
+    	}
     	
     	if (attemptList.isEmpty()) { 
     		System.out.println("\n**No attempt has been submitted.**");
@@ -661,8 +667,13 @@ public class Course {
 			while (rs_paraQuesText.next()) {
 				temp_paraText = rs_paraQuesText.getString("QUESTION_TEXT");
 			}
+<<<<<<< HEAD
 			anscorrIdx = parameterQuestionAnswer(connection, uid, cid, eid, temp_paraText, questionList.get(i), atid, dateList.get(i));    	    	
     		}//end parameter answers
+=======
+			anscorrIdx = parameterQuestionAnswer(connection, uid, cid, eid, temp_paraText, questionList.get(i), atid, dateList.get(i)); 
+		}//end parameter answers
+>>>>>>> origin/master
     		
     		if (anscorrIdx == true) { count_corrans += 1; }
     		else { count_incorrans += 1; }
@@ -813,7 +824,11 @@ public class Course {
 		return corransIdx;
     }
     
+<<<<<<< HEAD
     // Display of concrete questions & answers
+=======
+   // Display of concrete questions & answers
+>>>>>>> origin/master
  	static boolean ConcreteQuestionAnswer(Connection connection, String uid, String cid, String eid, String qid, String atid, Date submit_time) throws ParseException, SQLException {
  		
  		boolean anscorrIdx = true;
