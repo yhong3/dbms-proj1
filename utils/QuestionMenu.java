@@ -175,15 +175,12 @@ public class QuestionMenu {
 			addQuestionText(s);
 			System.out.println("The hint of the question is: ");
 			hint = s.nextLine();
-			System.out.println();
 			System.out.println("The detailed explanation of the question is: ");
 			detailed_explanation = s.nextLine();
-			System.out.println();
 			System.out.println("The difficulty level of the question is (1-5): ");
 			difficulty_level = s.nextInt();
 			s.nextLine();
-			System.out.println();
-			if (notEmptyStr(hint) || notEmptyStr(detailed_explanation) || difficulty_level < 6 || difficulty_level > 0 || (type == 1 || type == 0)) {
+			if (notEmptyStr(hint) && notEmptyStr(detailed_explanation) && difficulty_level < 6 && difficulty_level > 0 && (type == 1 || type == 0)) {
 				check = 0;
 			}
 			else {
@@ -316,7 +313,7 @@ public class QuestionMenu {
 			if(type == 1) {
 				System.out.print("The text of this paramterized question should include <?> where you want the parameter value to replace: \n");
 				question_text = s.nextLine();
-				System.out.println();
+				//System.out.println();
 				num_of_p = countSString(question_text);
 				if(num_of_p > 0 && num_of_p < 6) {
 					check = 1;
@@ -332,7 +329,7 @@ public class QuestionMenu {
 			else {
 				System.out.print("The text of this concrete question is: \n");
 				question_text = s.nextLine();
-				System.out.println();
+				//System.out.println();
 				check = 1;
 			}
 		}
