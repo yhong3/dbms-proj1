@@ -70,7 +70,7 @@ public class SqlQueries {
     public static final String SQL_CURRENTOPENHW = 
     		" SELECT EX.exercise_id, EX.exercise_name, EX.retries_allowed, EX.exercise_mode" + 
     		" FROM EXERCISE EX " + 
-    		" WHERE EX.COURSE_ID = ? AND EX.EXERCISE_END > sysdate";
+    		" WHERE EX.COURSE_ID = ? AND EX.EXERCISE_END > sysdate AND EX.EXERCISE_START < sysdate";
     
     // Check student max attempt for a exercise
     public static final String SQL_STUDENTMAXATTEMPTEXERCISE = 
