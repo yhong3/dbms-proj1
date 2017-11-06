@@ -445,8 +445,11 @@ public class Course {
     		case "9":
     			// Show all the attempt student has for that exercise
     			String atid = studentChooseAttempt(connection, uid, cid, eid); // attempt
-    			studentViewDetailAttempt(connection, uid, cid, eid, atid);
-    			break;
+    			if (atid.contains("tEmpty")) { break; }
+    			else {
+	    			studentViewDetailAttempt(connection, uid, cid, eid, atid);
+	    			break;
+    			}
     			
     		case "10":
 				Menu.returnLoginMessage();
@@ -562,6 +565,12 @@ public class Course {
     		String temp_aid = rs_exercise.getString("ATTEMPT");
     		attemptList.add(temp_aid);
         }
+	    
+	if (attemptList.isEmpty()) { 
+		System.out.println("\n**No attempt has been submitted.**");
+		String tsignal = "tEmpty";
+		return tsignal;
+    	}
     	
     	Menu.studentShowAttempts(attemptList);
     	Menu.studentSelectAttemptMessage();
@@ -635,7 +644,7 @@ public class Course {
     			System.out.println("\n***********************************");
     			System.out.println("The answer of Quesiton " + questionList.get(i) + ": ");
     			System.out.println("***********************************");
-    			anscorrIdx = ConcreteQuestionAnswer(connection, uid, cid, questionList.get(i), atid, dateList.get(i));
+    			anscorrIdx = ConcreteQuestionAnswer(connection, uid, cid, eid, questionList.get(i), atid, dateList.get(i));
     		}
     		// If question type is 1 (parameter)
     		else {
@@ -652,8 +661,8 @@ public class Course {
 			while (rs_paraQuesText.next()) {
 				temp_paraText = rs_paraQuesText.getString("QUESTION_TEXT");
 			}
-			anscorrIdx = parameterQuestionAnswer(connection, uid, temp_paraText, questionList.get(i), paraAnswerList.get(i), dateList.get(i));    	    	
-    		}//end parameter answers
+			anscorrIdx = parameterQuestionAnswer(connection, uid, cid, eid, temp_paraText, questionList.get(i), atid, dateList.get(i)); 
+		}//end parameter answers
     		
     		if (anscorrIdx == true) { count_corrans += 1; }
     		else { count_incorrans += 1; }
@@ -804,16 +813,16 @@ public class Course {
 	return corransIdx;
     }
     
-    // Display of concrete questions & answers
- 	static boolean ConcreteQuestionAnswer(Connection connection, String uid, String cid, String qid, String atid, Date submit_time) throws ParseException, SQLException {
+   // Display of concrete questions & answers
+ 	static boolean ConcreteQuestionAnswer(Connection connection, String uid, String cid, String eid, String qid, String atid, Date submit_time) throws ParseException, SQLException {
  		
  		boolean anscorrIdx = true;
  		
  		String query = "SELECT CA.CONCRETE_ANSWER_ID, CA.ANSWER_TEXT, CA.SHORT_EXPLANATION, CA.TYPE, Q.QUESTION_TEXT, Q.HINT, " +
  				"E.EXERCISE_END, E.CORRECT_ANSWER_POINTS, E.INCORRECT_ANSWER_PENALTY " + 
  				"FROM CONCRETE_ANSWER CA, QUESTION Q, SUBMITS S, EXERCISE E " + 
- 				"WHERE S.USER_ID = ? AND S.COURSE_ID = ? AND "
- 				+ "CA.QUESTION_ID= ? AND S.ATTEMPT = ? AND "
+ 				"WHERE S.USER_ID = ? AND S.COURSE_ID = ? AND E.EXERCISE_ID = ? AND "
+ 				+ "S.QUESTION_ID = ? AND S.ATTEMPT = ? AND "
  				+ "CA.QUESTION_ID = Q.QUESTION_ID " +
  				"AND CA.CONCRETE_ANSWER_ID = S.CONCRETE_ANSWER_ID AND S.EXERCISE_ID = E.EXERCISE_ID ";	
  		
@@ -821,8 +830,9 @@ public class Course {
 		ResultSet rs;
 		stmt.setString(1, uid);
 		stmt.setString(2, cid);
-		stmt.setString(3, qid);
-		stmt.setString(4, atid);
+		stmt.setString(3, eid);
+		stmt.setString(4, qid);
+		stmt.setString(5, atid);
 		
 		
 		rs = stmt.executeQuery();
@@ -838,8 +848,6 @@ public class Course {
 			Date exercise_due = rs.getDate("exercise_end");
 			String corr_points = rs.getString("correct_answer_points");
 			String incorr_points = rs.getString("incorrect_answer_penalty");
-			
-			System.out.println(exercise_due);
 			
 			// 1. All the questions in that attempt
 			
@@ -862,7 +870,8 @@ public class Course {
     
 	
  	// Display of parameter questions & answers
-	static boolean parameterQuestionAnswer(Connection connection, String uid, String paraQuesText, String qid, String aid, Date submit_time) {
+	static boolean parameterQuestionAnswer(Connection connection, String uid, String cid, String eid, String paraQuesText, 
+			String qid, String atid, Date submit_time) {
 		Pattern p = Pattern.compile("<\\s*\\?\\s*>");
 		
 		int para_num = countSString(paraQuesText);
@@ -881,16 +890,21 @@ public class Course {
 		}
 		query += ", PA.PARAMETER_ID, PA.PARAMETER_ANSWER_ID, PA.ANSWER_TEXT, PA.SHORT_EXPLANATION, PA.TYPE, Q.QUESTION_TEXT, Q.HINT, "
 				+ "E.EXERCISE_END, E.CORRECT_ANSWER_POINTS, E.INCORRECT_ANSWER_PENALTY " + 
-				"FROM PARAMETER_ANSWER PA, QUESTION Q, SUBMITS S, EXERCISE E " + 
-				"WHERE S.USER_ID = ? AND PA.QUESTION_ID=? AND PA.PARAMETER_ANSWER_ID = ? AND PA.QUESTION_ID = Q.QUESTION_ID " +
-				"AND PA.PARAMETER_ANSWER_ID = S.PARAMETER_ANSWER_ID AND S.EXERCISE_ID = E.EXERCISE_ID ";		
+				"FROM PARAMETER_ANSWER PA, QUESTION Q, SUBMITS S, EXERCISE E " +  
+				"WHERE S.USER_ID = ? AND S.COURSE_ID = ? AND "
+				+ "S.EXERCISE_ID=? AND S.QUESTION_ID = ? AND S.ATTEMPT = ? AND "
+				+ "PA.QUESTION_ID = Q.QUESTION_ID " +
+				"AND PA.PARAMETER_ANSWER_ID = S.PARAMETER_ANSWER_ID AND S.EXERCISE_ID = E.EXERCISE_ID ";
 		
 		try {
 			PreparedStatement stmt = connection.prepareStatement(query);
 			ResultSet rs;
 			stmt.setString(1, uid);
-			stmt.setString(2, qid);
-			stmt.setString(3, aid);
+			stmt.setString(2, cid);
+			stmt.setString(3, eid);
+			stmt.setString(4, qid);
+			stmt.setString(5, atid);
+			
 			rs = stmt.executeQuery();
 			String s = "";
 			int count_rs = 0;
