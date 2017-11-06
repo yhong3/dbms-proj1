@@ -57,6 +57,9 @@ public class SqlQueries {
     public static final String SQL_ENROLLTACOURSE = "INSERT INTO COURSE_STAFF(COURSE_ID, USER_ID, ROLE) "
     		+ "VALUES (?,?,2)";
     
+    // Update the role of TA
+    public static final String SQL_REVISETAROLE = "UPDATE USERID_PASSWORD SET ROLE = 2 WHERE USER_ID = ? ";
+    
     // Check Student's level (Undergraduate/Graduate)
     public static final String SQL_CHECKLEVEL = "SELECT S.TYPE FROM STUDENT S WHERE S.USER_ID = ?";
     

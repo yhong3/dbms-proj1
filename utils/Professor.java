@@ -310,7 +310,7 @@ public class Professor {
 			   // Add course instructor and TAs (Insert into the table of COURSE_STAFF)
 			   case "2":
 				   System.out.println("Add an instructor or TA for this New Course: \n");
-				   returnToRoot = addStaffForCourse(connection, cid);
+				   returnToRoot = addStaffForCourse(connection, uid, cid);
 				   break;
 
 			   // Add course topics (Insert into the table of TOPIC)
@@ -380,12 +380,11 @@ public class Professor {
 	    	preparedStatement.setString(5, clevel);
 	    	preparedStatement.execute();
 	    	
-		Menu.addCourseSuccessMessage(cid);
     	}
     }
 
 	// Add a staff to the new added course 
-	static boolean addStaffForCourse(Connection connection, String cid) throws Throwable {
+	static boolean addStaffForCourse(Connection connection, String uid, String cid) throws Throwable {
     	
     	Scanner scanner = new Scanner(System.in);    	
     	String selection = "1";
@@ -428,7 +427,7 @@ public class Professor {
     			break;
     			
     		case "2":
-    			Course.instructorEnrollTA(connection, cid);
+    			Course.instructorEnrollTA(connection, uid, cid);
     			break;
     			
     		case "3":

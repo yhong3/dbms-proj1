@@ -114,7 +114,7 @@ public class Course {
 			break;
         	// View/Add TA --> Add TA
             	case "2":
-            		instructorEnrollTA(connection, cid);
+            		instructorEnrollTA(connection, uid, cid);
             		break;
                 
 	 	case "3":
@@ -172,7 +172,7 @@ public class Course {
     }
     
 // View/Add TA --> Add TA:  Instructor enroll a student as TA
-    static void instructorEnrollTA(Connection connection, String cid) throws Throwable {
+    static void instructorEnrollTA(Connection connection, String uid, String cid) throws Throwable {
     	
     	Scanner scan = new Scanner(System.in);
     	
@@ -186,7 +186,7 @@ public class Course {
     	// Student enrolled in the system, not enrolled in the course, has the type of "Graduate", and not already been set as the TA for this course    	
     	if (Student.checkStudentSysEnrollment(connection, sid) && !checkStudentEnrollment(connection, sid, cid) 
     			&& checkTARequirement(connection, sid) && !TA.checkTACourse (connection, sid, cid))
-    	{ addTA(connection, cid, sid); }
+    	{ addTA(connection, uid, cid, sid); }
     	
     	// Student not enrolled in the system
     	else if (!Student.checkStudentSysEnrollment(connection, sid))
@@ -262,7 +262,7 @@ public class Course {
     	}
     	
     	String tlevel = "Grad";
-		if (tlevel.contains(slevel) || slevel.contains(tlevel)) { System.out.println("Testtesttest"); return true; }
+		if (tlevel.contains(slevel) || slevel.contains(tlevel)) { return true; }
     	else { return false; }
     	
     }
@@ -1043,12 +1043,17 @@ public class Course {
     	Menu.returnToMenuCommand();
     }
 	
-	static void addTA(Connection connection, String cid, String sid) throws SQLException {
+	static void addTA(Connection connection, String uid, String cid, String sid) throws SQLException {
 
 		preparedStatement = connection.prepareStatement(SqlQueries.SQL_ENROLLTACOURSE);
 		preparedStatement.setString(1, cid);
 		preparedStatement.setString(2, sid);
 		preparedStatement.execute();
+		
+		// Revise the role of student in userid_password table as 2
+		PreparedStatement preparedStatement_role = connection.prepareStatement(SqlQueries.SQL_REVISETAROLE);
+		preparedStatement_role.setString(1, sid);
+		preparedStatement_role.execute();
 
 		Menu.enrollTASuccessMessage(sid, cid);
 	}
