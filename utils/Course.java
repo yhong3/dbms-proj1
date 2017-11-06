@@ -572,12 +572,6 @@ public class Course {
 		return tsignal;
     	}
     	
-    	if (attemptList.isEmpty()) { 
-    		System.out.println("\n**No attempt has been submitted.**");
-    		String tsignal = "tEmpty";
-    		return tsignal;
-    	}
-    	
     	Menu.studentShowAttempts(attemptList);
     	Menu.studentSelectAttemptMessage();
     	
@@ -586,7 +580,7 @@ public class Course {
     	
     	if (attemptList.contains(input_aid)) {
     		return input_aid;
-    	}    	
+    	} 
     	else { 
     		Menu.warningMessage();
     		Menu.returnToMenuMessage();
@@ -667,13 +661,8 @@ public class Course {
 			while (rs_paraQuesText.next()) {
 				temp_paraText = rs_paraQuesText.getString("QUESTION_TEXT");
 			}
-<<<<<<< HEAD
-			anscorrIdx = parameterQuestionAnswer(connection, uid, cid, eid, temp_paraText, questionList.get(i), atid, dateList.get(i));    	    	
-    		}//end parameter answers
-=======
 			anscorrIdx = parameterQuestionAnswer(connection, uid, cid, eid, temp_paraText, questionList.get(i), atid, dateList.get(i)); 
 		}//end parameter answers
->>>>>>> origin/master
     		
     		if (anscorrIdx == true) { count_corrans += 1; }
     		else { count_incorrans += 1; }
@@ -780,55 +769,51 @@ public class Course {
     		String question_type, String corr_points, String incorr_points) {
 
     	Boolean corransIdx = true;
-	    	
-		// 3. Solution for each question
-		// Display the hints/solutions for each question
-		ZoneId z = ZoneId.of( "America/New_York" ); // use the new_york time zone to determine current date
-		LocalDate currentZoneDate = LocalDate.now(z);
-		java.util.Date currentDate = java.sql.Date.valueOf(currentZoneDate);
-	
-		// If current data after the exercise due, show the explanation
-		if (currentDate.compareTo(exercise_due) > 0) {
-			System.out.println();
-			System.out.println("**3. Solution for this question**");
-			System.out.println("Short Explanation: " + short_explanation);
-		}
-		// Else of current data before the exercise due, show the hint
-		else {
-			System.out.println();
-			System.out.println("**3. Solution for this question**");
-			System.out.println("Question Hint: " + answer_hint);
-		}
-	
-		// 4. Whether the selected answer was correct or not (type_0: Incorrect; type_1: Correct)
-		// 5. Points scored for each question
-	
-		if (answer_type.equals("0")) { 
-			System.out.println();
-			System.out.println("**4. Whether the selected answer was correct or not**");
-			System.out.println("Answer for this question is: " + "Incorrect");
-			System.out.println();
-			System.out.println("**5. Points scored for this question**");
-			System.out.println("Points scored for this question is: " + incorr_points);
-			corransIdx = false;
-		}
-	
-		else { 
-			System.out.println();
-			System.out.println("**4. Whether the selected answer was correct or not**");
-			System.out.println("Answer for this question is: " + "Correct");
-			System.out.println();
-			System.out.println("**5. Points scored for this question**");
-			System.out.println("Points scored for this question is: " + corr_points);
-		}
-		return corransIdx;
+    	
+	// 3. Solution for each question
+	// Display the hints/solutions for each question
+	ZoneId z = ZoneId.of( "America/New_York" ); // use the new_york time zone to determine current date
+	LocalDate currentZoneDate = LocalDate.now(z);
+	java.util.Date currentDate = java.sql.Date.valueOf(currentZoneDate);
+
+	// If current data after the exercise due, show the explanation
+	if (currentDate.compareTo(exercise_due) > 0) {
+		System.out.println();
+		System.out.println("**3. Solution for this question**");
+		System.out.println("Short Explanation: " + short_explanation);
+	}
+	// Else of current data before the exercise due, show the hint
+	else {
+		System.out.println();
+		System.out.println("**3. Solution for this question**");
+		System.out.println("Question Hint: " + answer_hint);
+	}
+
+	// 4. Whether the selected answer was correct or not (type_0: Incorrect; type_1: Correct)
+	// 5. Points scored for each question
+
+	if (answer_type.equals("0")) { 
+		System.out.println();
+		System.out.println("**4. Whether the selected answer was correct or not**");
+		System.out.println("Answer for this question is: " + "Incorrect");
+		System.out.println();
+		System.out.println("**5. Points scored for this question**");
+		System.out.println("Points scored for this question is: " + incorr_points);
+		corransIdx = false;
+	}
+
+	else { 
+		System.out.println();
+		System.out.println("**4. Whether the selected answer was correct or not**");
+		System.out.println("Answer for this question is: " + "Correct");
+		System.out.println();
+		System.out.println("**5. Points scored for this question**");
+		System.out.println("Points scored for this question is: " + corr_points);
+	}
+	return corransIdx;
     }
     
-<<<<<<< HEAD
-    // Display of concrete questions & answers
-=======
    // Display of concrete questions & answers
->>>>>>> origin/master
  	static boolean ConcreteQuestionAnswer(Connection connection, String uid, String cid, String eid, String qid, String atid, Date submit_time) throws ParseException, SQLException {
  		
  		boolean anscorrIdx = true;
@@ -882,7 +867,8 @@ public class Course {
 		
  		return anscorrIdx;
  	}
-
+    
+	
  	// Display of parameter questions & answers
 	static boolean parameterQuestionAnswer(Connection connection, String uid, String cid, String eid, String paraQuesText, 
 			String qid, String atid, Date submit_time) {
