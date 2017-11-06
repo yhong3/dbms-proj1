@@ -205,26 +205,6 @@ BEGIN
         end if;
 END;
 /
-
--- Check student is enrolled before dropping them
-CREATE OR REPLACE TRIGGER check_student_enrolled
-BEFORE DELETE
-ON COURSE_STUDENT
-FOR EACH ROW
-declare
-  icount number(10);
-BEGIN
-        SELECT count(*)
-        into icount
-        FROM COURSE CC, STUDENT S
-        WHERE CC.course_id = :new.course_id
-        AND S.user_id = :new.user_id;
-        
-        if icount = 0 then
-          raise_application_error(-20112, 'ERROR, student cannot be dropped as student is not enrolled in this course');
-        end if;
-END;
-/
 -- each concrete question id: 1 correct answer and 3 incorrect answer
 CREATE OR REPLACE TRIGGER concrete_question_answer_count
 BEFORE INSERT OR UPDATE

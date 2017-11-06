@@ -66,7 +66,7 @@ public class AddAnswers {
 					s.nextLine();
 					System.out.println();
 					
-					if(notEmptyStr(answer_text) ||  notEmptyStr(short_explanation) || (type == 1 || type == 0)) {
+					if(notEmptyStr(answer_text) &&  notEmptyStr(short_explanation) && (type == 1 || type == 0)) {
 						if(type == 1) {
 							count_correct_answer += 1;
 						} else {
@@ -176,7 +176,7 @@ public class AddAnswers {
 			type = s.nextInt();
 			s.nextLine();
 			
-			if(notEmptyStr(answer_text) ||  notEmptyStr(short_explanation) || (type == 1 || type == 0)) {
+			if(notEmptyStr(answer_text) && notEmptyStr(short_explanation) && (type == 1 || type == 0)) {
 				if(type == 1) {
 					count_correct_answer += 1;
 				} else {
