@@ -315,9 +315,35 @@ public class Course {
     		rt_cstart = rs_profile.getString("COURSE_START");
     		rt_cend = rs_profile.getString("COURSE_END");
     	}
- 	   	
- 	   while (course_selection != "4" && courseReturn && returnToRoot) {
+    	
+    	// UPDATED HERE to VIEW INSTRUCTOR AND TA
+    	List<String> instaList = new ArrayList<String>(); 
+    	List<String> roleList = new ArrayList<String>(); 
+    	
+    	PreparedStatement preparedStatement_insta = connection.prepareStatement(SqlQueries.SQL_STUVIEINSTA);
+    	preparedStatement_insta.setString(1, cid);
+    	ResultSet rs_instaprofile = preparedStatement_insta.executeQuery();
+    	
+    	while (rs_instaprofile.next()) {
+    		String temp_iaID = rs_instaprofile.getString("USER_ID");
+    		instaList.add(temp_iaID);
+    		String temp_iaRole = rs_instaprofile.getString("ROLE");
+    		roleList.add(temp_iaRole);
+    	}
+    	
+    	// UPDATE HERE to VIEW INSTRUCTOR AND TA
+		   for (int i = 0; i < instaList.size(); i++) {
+			  String temp_id = instaList.get(i);
+			  String temp_role = roleList.get(i);
+			  
+			  if (temp_role.contains("1")) {System.out.println("Instructor: " + temp_id);}
+			  else {System.out.println("Teaching Assistant: " + temp_id);}
+		}
+    	
+    	
+ 	   	while (course_selection != "4" && courseReturn && returnToRoot) {
  		   Menu.studentViewCourseMenu(rt_cname, rt_cstart, rt_cend);
+ 		   
  		   course_selection = scanner.nextLine();
 	    	
  		   switch (course_selection) {

@@ -25,6 +25,12 @@ public class SqlQueries {
     		+ "FROM STUDENT S, COURSE_STUDENT CS, COURSE C "
     		+ "WHERE S.USER_ID = ? AND S.USER_ID = CS.USER_ID AND CS.COURSE_ID = C.COURSE_ID ";
     
+    // Student check Instructor and TA
+    public static final String SQL_STUVIEINSTA = "SELECT U.ROLE, U.USER_ID "
+    		+ "FROM USERID_PASSWORD U, COURSE_STAFF CS "
+    		+ "WHERE CS.COURSE_ID = ? AND U.USER_ID = CS.USER_ID ";
+    
+    
     // Check if student enrolled in a certain course
     public static final String SQL_CHECKSTUCOURSEENROLL = "SELECT * FROM COURSE_STUDENT CS "
     		+ "WHERE CS.USER_ID = ? AND CS.COURSE_ID = ? ";
