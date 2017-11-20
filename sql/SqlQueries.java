@@ -216,7 +216,8 @@ public class SqlQueries {
 	//TQA
     public static final String SQL_FINDID = "SELECT MAX(?1) FROM ";
 
-	public static final String SQL_INSERTTOPIC = "INSERT INTO TOPIC(TOPIC_ID, TOPIC_NAME) VALUES (?,?)";
+	public static final String SQL_INSERTTOPIC = "INSERT INTO TOPIC(TOPIC_ID, TOPIC_NAME, COURSE_ID) VALUES (?, ?, ?)";
+
 
 
 	public static final String SQL_INSERTQUESTION = "INSERT INTO QUESTION(QUESTION_ID, TOPIC_ID, QUESTION_TEXT, DIFFICULTY_LEVEL, HINT, DETAILED_EXPLANATION, TYPE)"
