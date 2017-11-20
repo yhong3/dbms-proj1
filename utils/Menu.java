@@ -84,14 +84,13 @@ public class Menu {
 		System.out.print(
     		"***********************************\n" +
     		"TA Main Menu\n" +
-            "Please Make a Selection (1-5):\n" +
+            "Please Make a Selection (1-3):\n" +
             "***********************************\n" +
             "0. Return to Previous Menu \n" +
             "1. View Profile\n" +
             "2. View Course\n" +
             "3. Enroll/Drop a student\n" +
-            "4. View Report\n" +
-            "5. Logout\n" +
+            "4. Logout\n" +
     		"***********************************\n");
 	}
 	

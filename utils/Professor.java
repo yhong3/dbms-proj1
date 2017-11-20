@@ -520,24 +520,37 @@ public class Professor {
     	System.out.println("Please enter the student's user_id: \n");
     	String sid = scanner.nextLine();
     	
-    	// If student has been enrolled in the system && has not been enrolled in the course && has the level required by course 
-    	if (Student.checkStudentSysEnrollment(connection, sid) && Course.checkCourseRequirement(connection, sid, cid)) {
-	    	PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.SQL_ENROLLSTUDENTCOURSE);
+    	// Student enrolled in the system && has not been enrolled in the course && has the level required by course
+    	// && has not been enrolled as a TA
+    	if (Student.checkStudentSysEnrollment(connection, sid) && !Course.checkStudentEnrollment(connection, sid, cid) 
+    			&& Course.checkCourseRequirement(connection, sid, cid) && !TA.checkTACourse (connection, sid, cid)) {
+    		PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.SQL_ENROLLSTUDENTCOURSE);
 	    	preparedStatement.setString(1, cid);
 	    	preparedStatement.setString(2, sid);
 	    	preparedStatement.execute();
 	    	Menu.enrollSidMessage(sid);
     	}
     	
-    	// If student has been enrolled in the system, has not been enrolled in the course, but has the different level with requirement
-    	else if (Student.checkStudentSysEnrollment(connection, sid) && !Course.checkCourseRequirement(connection, sid, cid)) { 
-    		Menu.enrollStuLevelFailureMessage();
-    		Menu.enrollStuCourseFailMessage(); } 
-    	// If student has not been enrolled in the system
-    	else { 
-    		Menu.enrollNoneStudentFailMessage(); 
-    		Menu.returnToMenuCommand();
-    		}
+    	// Student not enrolled in the system
+    	else if (!Student.checkStudentSysEnrollment(connection, sid))
+    	{ Menu.enrollNoneStudentFailMessage(); } 
+    	
+    	// Student has already been enrolled in the course
+    	else if (Course.checkStudentEnrollment(connection, sid, cid))
+    	{ Menu.enrollStuEnrollFailureMessage(); }
+    	
+    	// Student not has the level required by course
+    	else if (!Course.checkCourseRequirement(connection, sid, cid))
+    	{ Menu.enrollStuLevelFailureMessage(); }
+    	
+    	// Student has already been set as the TA for this course
+    	else if ( TA.checkTACourse (connection, sid, cid))
+    	{ Menu.enrollStuRedoFailureMessage(); }	
+    	
+    	// Else
+    	else { System.out.println("\n**Cannot recognize your input.**"); }
+    	
+    	Menu.returnToMenuCommand();
     }
     
     // Instructor Main Menu --> Enroll/Drop a student:  Drop student from course
@@ -585,6 +598,7 @@ public class Professor {
         	preparedStatement.setString(2, sid);
         	preparedStatement.execute();
         	Menu.dropSidMessage(sid);
+        	Menu.returnToMenuCommand();
     	}
     	else { 
     		Menu.dropStuEnrollFailureMessage();  

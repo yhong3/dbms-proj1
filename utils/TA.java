@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import sql.SqlQueries;
 import utils.Menu;
+import utils.Report;
 
 public class TA extends Professor{
 	
@@ -41,18 +42,14 @@ public class TA extends Professor{
                 break;
                 
             case "2":
-            	taViewCourseMenu(connection, uid);
+            	returnToRoot = taViewCourseMenu(connection, uid);
             	break;
             		
             case "3":
             	returnToRoot = instructorEnrollStudent(connection, uid);
             	break;
-                
-            case "4":
-	            //TODO: View report 
-	            break;
 	            	
-            case "5":
+            case "4":
             	Menu.returnLoginMessage();
             	returnToRoot = false;
             	return returnToRoot;

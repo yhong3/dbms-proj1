@@ -71,7 +71,7 @@ public class Course {
 	        	returnToRoot = instructorEnrollStudent(connection, cid);
 	        	break;
 	        
-	        // 6. TODO: View Report
+	        // 6. View Report
 	        case "6":
 	        	Report.viewreport(connection, cid);
 	        	break;
@@ -109,19 +109,19 @@ public class Course {
         		studentReturn = false;
         		break;
         	// View/Add TA --> View TA
-	 	case "1":
-			viewTA(connection, cid);
-			break;
-        	// View/Add TA --> Add TA
-            	case "2":
-            		instructorEnrollTA(connection, uid, cid);
-            		break;
-                
-	 	case "3":
-			Menu.returnLoginMessage();
-			returnToRoot = false;
-			return returnToRoot;
-				
+		 	case "1":
+				viewTA(connection, cid);
+				break;
+	        	// View/Add TA --> Add TA
+			case "2":
+				instructorEnrollTA(connection, uid, cid);
+				break;
+	                
+		 	case "3":
+				Menu.returnLoginMessage();
+				returnToRoot = false;
+				return returnToRoot;
+					
             	default:
 			Menu.warningMessage();
 			break;
@@ -179,9 +179,6 @@ public class Course {
     	Menu.enrollTAMessage();
     	System.out.println("Please Enter the TA's user_id: \n");
     	String sid = scan.nextLine();
-    	
-    	// Check student type
-    	String tempType = Student.checkStudentType(connection, sid);
     	
     	// Student enrolled in the system, not enrolled in the course, has the type of "Graduate", and not already been set as the TA for this course    	
     	if (Student.checkStudentSysEnrollment(connection, sid) && !checkStudentEnrollment(connection, sid, cid) 
@@ -272,8 +269,9 @@ public class Course {
     	
     	boolean cenrollIdx = false;
     	
-    	PreparedStatement preparedStatement_cenroll = connection.prepareStatement(SqlQueries.SQL_STUVIEWALLCOURSE);
+    	PreparedStatement preparedStatement_cenroll = connection.prepareStatement(SqlQueries.SQL_CHECKSTUCOURSEENROLL);
     	preparedStatement_cenroll.setString(1, sid);
+    	preparedStatement_cenroll.setString(2, cid);
     	ResultSet rs_cenroll = preparedStatement_cenroll.executeQuery();
     	
     	while (rs_cenroll.next()) {
@@ -989,7 +987,7 @@ public class Course {
 	    		courseView = false;
         		break;
 	    	
-	    	// TODO: 3. View/Add Exercise
+	    	// 3. View/Add Exercise
 	        case "3":
 	        	ExerciseMenu.ViewExerciseMenu(connection,cid); 
 	        	break;
@@ -1004,9 +1002,9 @@ public class Course {
 	        	returnToRoot = instructorEnrollStudent(connection, cid);
 	        	break;
 	        
-	        // 6. TODO: View Report
+	        // 6. View Report
 	        case "6":
-	        	Report.viewreport(connection, cid);  
+	        	Report.viewreport(connection, cid);
 	        	break;
 	        	
 	        case "7":
