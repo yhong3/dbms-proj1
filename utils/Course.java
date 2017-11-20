@@ -183,7 +183,7 @@ public class Course {
     	// Student enrolled in the system, not enrolled in the course, has the type of "Graduate", and not already been set as the TA for this course    	
     	if (Student.checkStudentSysEnrollment(connection, sid) && !checkStudentEnrollment(connection, sid, cid) 
     			&& checkTARequirement(connection, sid) && !TA.checkTACourse (connection, sid, cid))
-    	{ addTA(connection, uid, cid, sid); }
+    	{	addTA(connection, uid, cid, sid); }
     	
     	// Student not enrolled in the system
     	else if (!Student.checkStudentSysEnrollment(connection, sid))
@@ -375,7 +375,12 @@ public class Course {
 				}
 				else {
 					String eid = studentChoosePastHM(connection, uid, cid, past_exes);
-					returnToRoot = studentViewPastHM(connection, uid, cid, eid);
+					if (eid != null) {
+						returnToRoot = studentViewPastHM(connection, uid, cid, eid);
+					}
+					else {
+						Menu.returnToMenuMessage();
+					}
 				}
 				break;
     			
@@ -407,7 +412,6 @@ public class Course {
     	} 
     	else { 
     		Menu.warningMessage();
-    		Menu.returnToMenuMessage();
     		return null;
     	}
     }
@@ -1042,12 +1046,12 @@ public class Course {
     }
 	
 	static void addTA(Connection connection, String uid, String cid, String sid) throws SQLException {
-
+		
 		preparedStatement = connection.prepareStatement(SqlQueries.SQL_ENROLLTACOURSE);
 		preparedStatement.setString(1, cid);
 		preparedStatement.setString(2, sid);
 		preparedStatement.execute();
-		
+    	
 		// Revise the role of student in userid_password table as 2
 		PreparedStatement preparedStatement_role = connection.prepareStatement(SqlQueries.SQL_REVISETAROLE);
 		preparedStatement_role.setString(1, sid);

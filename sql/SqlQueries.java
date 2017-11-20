@@ -57,6 +57,11 @@ public class SqlQueries {
     // Drop a Student from a course 
     public static final String SQL_DROPSTUDENTCOURSE = "DELETE FROM COURSE_STUDENT WHERE COURSE_ID = ? AND USER_ID = ?";
     
+    // Check the role of a student
+    public static final String SQL_CHECKSTUDENTROLE = "SELECT U.ROLE"
+    		+ "FROM USERID_PASSWORD U, STUDENT S "
+    		+ "WHERE S.USER_ID =?  AND S.USER_ID = U.USER_ID";
+    
     // Enroll a TA to a course
     public static final String SQL_ENROLLTACOURSE = "INSERT INTO COURSE_STAFF(COURSE_ID, USER_ID, ROLE) "
     		+ "VALUES (?,?,2)";

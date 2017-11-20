@@ -470,8 +470,6 @@ public class Professor {
 		return iexist;
     }
 	
-	
-	
     // Instructor Main Menu --> Enroll/Drop a student:  Enroll student to course
     static void enrollStudent(Connection connection, String uid) throws Throwable
     {
